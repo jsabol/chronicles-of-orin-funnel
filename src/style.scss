@@ -17,15 +17,15 @@ body{background:#0d0d0c url("/assets/iron.webp") center/700px fixed;color:#d9c5a
 .brand em{display:none}
 .sun-mark{position:absolute;right:max(4vw,22px);border:0;background:url("/assets/living-sun.webp") center/contain no-repeat;box-shadow:none;border-radius:0;width:58px;height:58px}
 main{max-width:1280px;padding:0 max(4vw,22px) 86px}
-.doom-hero{height:380px;margin-inline:calc(max(4vw,22px)*-1);position:relative;border-bottom:3px solid #8b3c22;background:linear-gradient(90deg,rgba(7,7,6,.96) 0%,rgba(7,7,6,.68) 38%,rgba(7,7,6,.08) 72%),linear-gradient(0deg,#070706 0%,transparent 48%),url("/assets/hero-dying-suns.webp") 65% 42%/cover no-repeat}
+.doom-hero{height:380px;margin-inline:calc(max(4vw,22px)*-1);position:relative;border-bottom:3px solid #8b3c22;background:linear-gradient(90deg,rgba(7,7,6,.96) 0%,rgba(7,7,6,.68) 38%,rgba(7,7,6,.08) 72%),linear-gradient(0deg,#070706 0%,transparent 48%),url("/assets/hero-dying-suns.webp") right bottom/cover no-repeat}
 .doom-copy{position:absolute;left:max(4vw,22px);bottom:45px}
 .doom-copy .eyebrow{color:#a77750}
-.doom-copy h1{font:600 clamp(55px,7vw,92px)/.9 Newsreader,serif;text-transform:uppercase;margin:0;color:#dcc9a7;text-shadow:3px 3px 0 #120b07;letter-spacing:-.02em}
+.doom-copy h1{font:600 clamp(27.5px,3.5vw,46px)/.9 Newsreader,serif;text-transform:uppercase;margin:0;color:#dcc9a7;text-shadow:3px 3px 0 #120b07;letter-spacing:-.02em}
 .doom-copy>p{margin:10px 0;color:#b34527;text-transform:uppercase;letter-spacing:.12em;font-size:24px}
 .doom-copy>p b{font-weight:600}
 .doom-rule{color:#a1744e;letter-spacing:.25em}
 .funnel-actions{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:34px 0 42px;border-bottom:1px solid #6a3c27}
-.funnel-actions button{height:112px;display:flex;align-items:center;justify-content:center;gap:20px;border:3px solid #8f643d;outline:1px solid #21150e;outline-offset:-9px;font:600 clamp(24px,2.5vw,36px) Newsreader,serif;letter-spacing:.02em;box-shadow:0 0 0 2px #080605,0 5px 14px #000;text-transform:uppercase}
+.funnel-actions button{height:112px;display:flex;align-items:center;justify-content:center;gap:20px;border:3px solid #8f643d;outline:1px solid #21150e;outline-offset:-9px;font:600 clamp(12px,1.25vw,18px) Newsreader,serif;letter-spacing:.02em;box-shadow:0 0 0 2px #080605,0 5px 14px #000;text-transform:uppercase}
 .funnel-actions .primary{background:#6f1f11 url("/assets/iron.webp") center/520px;color:#e6c49a}
 .funnel-actions .secondary{background:#11110f url("/assets/iron.webp") center/520px;color:#d8bd96}
 .funnel-actions button:hover{transform:translateY(-2px);filter:brightness(1.15);box-shadow:0 0 0 2px #080605,0 8px 18px #000}
@@ -66,8 +66,8 @@ main{max-width:1280px;padding:0 max(4vw,22px) 86px}
 footer{border-top:1px solid #513421;background:#070706 url("/assets/iron.webp") center/700px}
 @media(max-width:800px){
  .masthead{height:82px}.masthead:before{font-size:29px}.brand{padding-inline:30px}.brand strong{font-size:33px}.brand span{font-size:10px}.sun-mark{width:42px;height:42px}
- main{padding-inline:20px}.doom-hero{height:310px;margin-inline:-20px;background-position:62% 45%}.doom-copy{left:24px;bottom:30px}.doom-copy h1{font-size:52px}.doom-copy>p{font-size:19px}
- .funnel-actions{grid-template-columns:1fr;gap:16px;padding:26px 0}.funnel-actions button{height:102px;font-size:25px;justify-content:flex-start;padding-left:35px}.funnel-actions img{width:62px;height:62px}
+ main{padding-inline:20px}.doom-hero{height:310px;margin-inline:-20px;background-position:right bottom}.doom-copy{left:24px;bottom:30px}.doom-copy h1{font-size:26px}.doom-copy>p{font-size:19px}
+ .funnel-actions{grid-template-columns:1fr;gap:16px;padding:26px 0}.funnel-actions button{height:102px;font-size:12.5px;justify-content:flex-start;padding-left:35px}.funnel-actions img{width:62px;height:62px}
  .section-title{gap:10px}.section-title h2{font-size:24px;white-space:nowrap}.fate-filters{gap:8px}.fate-filters button{min-width:0;flex:1;padding:10px 5px;font-size:15px}
  .fates>.cards{grid-template-columns:1fr;gap:8px}.character-card{min-height:132px;grid-template-columns:1fr 96px}.fate-copy{padding:20px 18px 16px}.fate-copy h3{font-size:26px}.fate-copy p{font-size:16px;margin-bottom:15px}.fate-vitals{font-size:16px;gap:15px}.fate-vitals span+span{padding-left:15px}.fate-seal img{width:50px;height:50px}.fate-seal strong{font-size:14px}
 }
@@ -86,3 +86,23 @@ footer{border-top:1px solid #513421;background:#070706 url("/assets/iron.webp") 
 #character-form .secondary{color:#17120e;background:#ead7ad}
 #character-form .danger{color:#8b2113;background:#f1dfb9}
 #character-form .trait-picker input:not(:checked)+span{color:#17120e;background:#f8eac9}
+
+.brand img{display:block;width:clamp(205px,24vw,300px);height:92px;object-fit:contain}
+@media(max-width:800px){.brand img{width:190px;height:68px}}
+@media(max-width:420px){.brand img{width:160px;height:62px}}
+
+.death-cause{color:#b8452a!important;font-style:italic!important;margin-top:-10px!important}.death-cause:before{content:"Cause: ";text-transform:uppercase;font:700 12px "Barlow Condensed",sans-serif;letter-spacing:.08em}
+
+
+/* Enhanced trinket selector: long results wrap instead of clipping. */
+#character-form .choices{width:100%;margin:0;text-transform:none;letter-spacing:0}
+#character-form .choices__inner{min-height:45px;padding:8px 34px 5px 10px;color:#120f0c;background:#fffaf0;border:2px solid #17120e;border-radius:0;font:600 16px/1.25 "Barlow Condensed",sans-serif}
+#character-form .choices__list--single{padding:0}
+#character-form .choices__list--single .choices__item{white-space:normal;overflow:visible;text-overflow:clip}
+#character-form .choices__list--dropdown,#character-form .choices__list[aria-expanded]{z-index:20;color:#120f0c;background:#fffaf0;border:2px solid #17120e;border-radius:0}
+#character-form .choices__list--dropdown .choices__item,#character-form .choices__list[aria-expanded] .choices__item{white-space:normal;line-height:1.25;padding:10px}
+#character-form .choices__list--dropdown .choices__item--selectable.is-highlighted,#character-form .choices__list[aria-expanded] .choices__item--selectable.is-highlighted{background:#d3a85e}
+#character-form .choices__input{color:#120f0c!important;background:#fffaf0!important;border:0;border-bottom:1px solid #8c7456!important}
+@media(max-width:700px){#character-form .choices__inner{font-size:15px;min-height:54px;display:flex;align-items:center}}
+
+#character-form input[readonly]{color:#3f3529;background:#d8c7a3;cursor:not-allowed;box-shadow:inset 0 0 0 1px #a38b68}

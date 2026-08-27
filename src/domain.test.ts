@@ -31,6 +31,13 @@ describe("funnel rules", () => {
     const batch=createFunnelBatch(fixed([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5]))
     expect(batch.filter(c=>deriveCharacter(c).status==="living")).toHaveLength(4)
   })
+  it("allows an explicit fate and cause of death", () => {
+    const c=createCharacter("batch")
+    c.fateOverride="deceased";c.causeOfDeath="Taken by the red storm"
+    expect(deriveCharacter(c).status).toBe("deceased")
+    c.fateOverride="living"
+    expect(deriveCharacter(c).status).toBe("living")
+  })
   it("validates ancestry point budgets", () => {
     const c=createCharacter("batch")
     c.ancestryId="tiefling";c.ancestryChoices={traits:[]}

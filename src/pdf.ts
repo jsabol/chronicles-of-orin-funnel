@@ -93,14 +93,16 @@ const drawSections = (
 }
 
 const characterSections = (character: DerivedCharacter): { left: Section[]; right: Section[] } => {
-  const trinket = character.trinket.text +
-    (character.record.trinketAnswer ? " " + character.record.trinketAnswer : "")
+  const trinket = character.trinket.text
   const left: Section[] = [
     { title: "Gear", text: character.gear.join(", ") || "None" },
     { title: "Proficiencies", text: character.proficiencies.join(", ") || "None" },
     { title: "Magic & Powers", text: character.magic.join(" | ") || "None" },
     { title: "Trinket", text: trinket },
   ]
+  if (character.status === "deceased" && character.record.causeOfDeath) {
+    left.push({ title: "Cause of Death", text: character.record.causeOfDeath })
+  }
   const right: Section[] = [
     {
       title: "Ancestry Traits",

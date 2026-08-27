@@ -43,6 +43,8 @@ export interface CharacterRecordV1 {
   occupationChoices: OccupationChoices
   trinketId: number
   trinketAnswer: string
+  fateOverride?: CharacterStatus
+  causeOfDeath?: string
 }
 
 export interface StoredDataV1 {

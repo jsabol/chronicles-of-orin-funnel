@@ -313,7 +313,7 @@ export const deriveCharacter = (record: CharacterRecordV1): DerivedCharacter => 
     proficiencyBonus: 2,
     armorClass,
     maxHp,
-    status: maxHp < 0 ? "deceased" : "living",
+    status: record.fateOverride ?? (maxHp < 0 ? "deceased" : "living"),
     hitDice: record.ancestryId === "human" ? "3d4" : "1d4",
     speed,
     size: ancestry.size,
@@ -373,7 +373,7 @@ export const validateCharacter = (record: CharacterRecordV1): string[] => {
   const errors: string[] = []
   if (!record.name.trim()) errors.push("Name is required.")
   if (record.name.length > 60) errors.push("Name must be 60 characters or fewer.")
-  if (record.trinketAnswer.length > 180) errors.push("Trinket answer must be 180 characters or fewer.")
+  if ((record.causeOfDeath?.length ?? 0) > 120) errors.push("Cause of death must be 120 characters or fewer.")
   for (const ability of ABILITIES) {
     const value = record.rawAbilities[ability]
     if (!Number.isInteger(value) || value < 3 || value > 18) errors.push(ability.toUpperCase() + " must be between 3 and 18.")
