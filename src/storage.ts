@@ -1,27 +1,32 @@
-import type { CharacterRecordV1, PaperSize, StoredDataV1 } from "./types"
+import type { CharacterRecordV1, PaperSize, StoredDataV1 } from "./types";
 
-export const STORAGE_KEY = "chronicles-of-orrin-funnel.characters.v1"
+export const STORAGE_KEY = "chronicles-of-orrin-funnel.characters.v1";
 
 export interface StorageLike {
-  getItem(key: string): string | null
-  setItem(key: string, value: string): void
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
 }
 
 export interface CharacterStore {
-  readonly warning: string | null
-  getState(): StoredDataV1
-  addCharacters(characters: CharacterRecordV1[]): void
-  updateCharacter(character: CharacterRecordV1): void
-  deleteCharacter(id: string): void
-  setPaperSize(paperSize: PaperSize): void
+  readonly warning: string | null;
+  getState(): StoredDataV1;
+  addCharacters(characters: CharacterRecordV1[]): void;
+  updateCharacter(character: CharacterRecordV1): void;
+  deleteCharacter(id: string): void;
+  setPaperSize(paperSize: PaperSize): void;
 }
 
-const emptyState = (): StoredDataV1 => ({ version: 1, characters: [], paperSize: "letter" })
+const emptyState = (): StoredDataV1 => ({
+  version: 1,
+  characters: [],
+  paperSize: "letter",
+});
 
 const isRecord = (value: unknown): value is CharacterRecordV1 => {
-  if (!value || typeof value !== "object") return false
-  const record = value as Partial<CharacterRecordV1>
-  return record.schemaVersion === 1 &&
+  if (!value || typeof value !== "object") return false;
+  const record = value as Partial<CharacterRecordV1>;
+  return (
+    record.schemaVersion === 1 &&
     typeof record.id === "string" &&
     typeof record.batchId === "string" &&
     typeof record.name === "string" &&
@@ -32,70 +37,84 @@ const isRecord = (value: unknown): value is CharacterRecordV1 => {
     Boolean(record.rawAbilities) &&
     Boolean(record.ancestryChoices) &&
     Boolean(record.occupationChoices)
-}
+  );
+};
 
 const parseState = (raw: string | null): StoredDataV1 => {
-  if (!raw) return emptyState()
-  const parsed = JSON.parse(raw) as Partial<StoredDataV1>
-  if (parsed.version !== 1 || !Array.isArray(parsed.characters)) throw new Error("Unsupported storage schema")
+  if (!raw) return emptyState();
+  const parsed = JSON.parse(raw) as Partial<StoredDataV1>;
+  if (parsed.version !== 1 || !Array.isArray(parsed.characters))
+    throw new Error("Unsupported storage schema");
   return {
     version: 1,
     characters: parsed.characters.filter(isRecord),
     paperSize: parsed.paperSize === "a4" ? "a4" : "letter",
-  }
-}
+  };
+};
 
 export const createCharacterStore = (storage?: StorageLike): CharacterStore => {
-  let warning: string | null = null
-  let state = emptyState()
-  const target = storage ?? (() => {
-    try {
-      return window.localStorage
-    } catch {
-      return undefined
-    }
-  })()
+  let warning: string | null = null;
+  let state = emptyState();
+  const target =
+    storage ??
+    (() => {
+      try {
+        return window.localStorage;
+      } catch {
+        return undefined;
+      }
+    })();
 
   try {
-    if (!target) throw new Error("Browser storage is unavailable")
-    state = parseState(target.getItem(STORAGE_KEY))
+    if (!target) throw new Error("Browser storage is unavailable");
+    state = parseState(target.getItem(STORAGE_KEY));
   } catch {
-    warning = "Saved characters could not be loaded. This session will continue without persistent storage."
-    state = emptyState()
+    warning =
+      "Saved characters could not be loaded. This session will continue without persistent storage.";
+    state = emptyState();
   }
 
   const persist = (): void => {
-    if (!target) return
+    if (!target) return;
     try {
-      target.setItem(STORAGE_KEY, JSON.stringify(state))
+      target.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
-      warning = "Changes are available for this session, but browser storage is unavailable."
+      warning =
+        "Changes are available for this session, but browser storage is unavailable.";
     }
-  }
+  };
 
   return {
     get warning() {
-      return warning
+      return warning;
     },
     getState: () => structuredClone(state),
     addCharacters(characters) {
-      state = { ...state, characters: [...state.characters, ...structuredClone(characters)] }
-      persist()
+      state = {
+        ...state,
+        characters: [...state.characters, ...structuredClone(characters)],
+      };
+      persist();
     },
     updateCharacter(character) {
       state = {
         ...state,
-        characters: state.characters.map((item) => item.id === character.id ? structuredClone(character) : item),
-      }
-      persist()
+        characters: state.characters.map((item) =>
+          item.id === character.id ? structuredClone(character) : item,
+        ),
+      };
+      persist();
     },
     deleteCharacter(id) {
-      state = { ...state, characters: state.characters.filter((item) => item.id !== id) }
-      persist()
+      state = {
+        ...state,
+        characters: state.characters.filter((item) => item.id !== id),
+      };
+      persist();
     },
     setPaperSize(paperSize) {
-      state = { ...state, paperSize }
-      persist()
+      state = { ...state, paperSize };
+      persist();
     },
-  }
-}
+  };
+};
