@@ -7,10 +7,10 @@ export const PDF_PAGE_SIZES: Record<PaperSize, readonly [number, number]> = {
   a4: [595.28, 841.89],
 }
 
-const ink = rgb(0.12, 0.1, 0.08)
-const rust = rgb(0.48, 0.16, 0.09)
-const sand = rgb(0.96, 0.91, 0.78)
-const muted = rgb(0.37, 0.32, 0.26)
+const ink = rgb(0.025, 0.02, 0.015)
+const rust = rgb(0.34, 0.07, 0.035)
+const sand = rgb(0.99, 0.975, 0.93)
+const muted = rgb(0.12, 0.095, 0.07)
 
 const pdfSafe = (value: string): string => value
   .replace(/[`']/g, "'")
