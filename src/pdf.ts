@@ -1,5 +1,6 @@
 import { PDFDocument, StandardFonts, degrees, rgb, type PDFFont, type PDFPage } from "pdf-lib"
-import { ABILITIES, type CharacterRecordV1, type DerivedCharacter, type PaperSize } from "./types"
+import { ABILITIES, type Ability, type CharacterRecordV1, type DerivedCharacter, type PaperSize, type TraitDefinition } from "./types"
+import { SKILLS } from "./data"
 import { deriveCharacter, formatModifier } from "./domain"
 
 export const PDF_PAGE_SIZES: Record<PaperSize, readonly [number, number]> = {
@@ -7,37 +8,31 @@ export const PDF_PAGE_SIZES: Record<PaperSize, readonly [number, number]> = {
   a4: [595.28, 841.89],
 }
 
-const ink = rgb(0.025, 0.02, 0.015)
-const rust = rgb(0.34, 0.07, 0.035)
-const sand = rgb(0.99, 0.975, 0.93)
-const muted = rgb(0.12, 0.095, 0.07)
+const ink = rgb(0, 0, 0)
+const rust = rgb(0, 0, 0)
+const paper = rgb(1, 1, 1)
+const muted = rgb(0, 0, 0)
+const rule = rgb(0, 0, 0)
 
 const pdfSafe = (value: string): string => value
-  .replace(/[`']/g, "'")
-  .replace(/[""]/g, '"')
-  .replace(/[--]/g, "-")
-  .replace(/./g, "...")
-  .replace(/[^ -~�-�]/g, "?")
+  .replace(/[\u2018\u2019]/g, "'")
+  .replace(/[\u201c\u201d]/g, '"')
+  .replace(/[\u2010-\u2015]/g, "-")
+  .replace(/\u2026/g, "...")
+  .replace(/[^\x20-\x7e]/g, "?")
 
 const wrapText = (text: string, font: PDFFont, size: number, maxWidth: number): string[] => {
-  const paragraphs = pdfSafe(text).split(/\n/)
   const lines: string[] = []
-  for (const paragraph of paragraphs) {
+  for (const paragraph of pdfSafe(text).split(/\n/)) {
     const words = paragraph.trim().split(/\s+/).filter(Boolean)
-    if (!words.length) {
-      lines.push("")
-      continue
-    }
+    if (!words.length) { lines.push(""); continue }
     let line = ""
     for (const word of words) {
       const candidate = line ? line + " " + word : word
-      if (font.widthOfTextAtSize(candidate, size) <= maxWidth) {
-        line = candidate
-      } else if (line) {
-        lines.push(line)
+      if (font.widthOfTextAtSize(candidate, size) <= maxWidth) line = candidate
+      else {
+        if (line) lines.push(line)
         line = word
-      } else {
-        lines.push(word)
       }
     }
     if (line) lines.push(line)
@@ -46,168 +41,245 @@ const wrapText = (text: string, font: PDFFont, size: number, maxWidth: number): 
 }
 
 const drawWrapped = (
-  page: PDFPage,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  font: PDFFont,
-  size: number,
-  lineHeight = size * 1.22,
-  maxLines = 99,
+  page: PDFPage, text: string, x: number, y: number, width: number,
+  font: PDFFont, size: number, color = ink, lineHeight = size * 1.18, maxLines = 99,
 ): number => {
-  const lines = wrapText(text, font, size, maxWidth).slice(0, maxLines)
-  lines.forEach((line, index) => page.drawText(line, { x, y: y - index * lineHeight, size, font, color: ink }))
+  const lines = wrapText(text, font, size, width).slice(0, maxLines)
+  lines.forEach((line, i) => page.drawText(line, { x, y: y - i * lineHeight, size, font, color }))
   return y - lines.length * lineHeight
 }
 
-interface Section {
-  title: string
-  text: string
+const drawFrame = (page: PDFPage, x: number, y: number, width: number, height: number, title: string, bold: PDFFont): void => {
+  page.drawRectangle({ x, y, width, height, borderColor: ink, borderWidth: 0.75 })
+  const label = pdfSafe(title.toUpperCase())
+  const labelWidth = bold.widthOfTextAtSize(label, 7.2) + 8
+  page.drawRectangle({ x: x + 6, y: y + height - 3, width: labelWidth, height: 9, color: paper })
+  page.drawText(label, { x: x + 10, y: y + height - 1, size: 7.2, font: bold, color: ink })
 }
 
-const drawSections = (
-  page: PDFPage,
-  sections: Section[],
-  x: number,
-  startY: number,
-  width: number,
-  bottom: number,
-  regular: PDFFont,
-  bold: PDFFont,
+const skillAbility: Record<string, Ability> = {
+  "Acrobatics": "dex", "Animal Handling": "wis", "Arcana": "int", "Athletics": "str",
+  "Deception": "cha", "History": "int", "Insight": "wis", "Intimidation": "cha",
+  "Investigation": "int", "Medicine": "wis", "Nature": "int", "Perception": "wis",
+  "Performance": "cha", "Persuasion": "cha", "Religion": "int", "Sleight of Hand": "dex",
+  "Stealth": "dex", "Survival": "wis",
+}
+
+const foldedTraitIds = new Set([
+  "tool", "skilled", "staying-power", "keen", "wild", "instinct",
+  "fleet-stride", "tough-hide", "design", "menacing", "beast-legs",
+])
+
+interface Feature {
+  name: string
+  summary: string
+}
+
+const visibleAncestryFeatures = (character: DerivedCharacter): Feature[] => {
+  const result: Feature[] = character.traits
+    .filter((trait: TraitDefinition) => !foldedTraitIds.has(trait.id))
+    .map((trait) => ({ name: trait.name, summary: trait.summary }))
+  if (character.record.ancestryChoices.focus) result.push({ name: "Focus", summary: character.record.ancestryChoices.focus })
+  if (character.record.ancestryChoices.runeTarget) result.push({ name: "Rune Target", summary: character.record.ancestryChoices.runeTarget })
+  return result
+}
+
+const drawAbilityColumn = (
+  page: PDFPage, character: DerivedCharacter, x: number, top: number, width: number,
+  bottom: number, bold: PDFFont,
 ): void => {
-  let size = 7.2
-  const estimateLines = (candidateSize: number): number => sections.reduce((count, section) =>
-    count + 1 + wrapText(section.text, regular, candidateSize, width).length, 0)
-  const available = startY - bottom
-  while (size > 6.2 && estimateLines(size) * size * 1.28 > available) size -= 0.2
+  let y = top
+  ABILITIES.forEach((ability) => {
+    page.drawText(ability.toUpperCase(), { x, y: y - 1, size: 8, font: bold, color: ink })
+    page.drawRectangle({ x: x + 21, y: y - 11, width: 27, height: 21, borderColor: ink, borderWidth: 0.7 })
+    page.drawText(String(character.finalAbilities[ability]), { x: x + 27, y: y - 5, size: 13, font: bold, color: ink })
+    page.drawEllipse({ x: x + 51, y: y - 1, xScale: 10, yScale: 8, borderColor: ink, borderWidth: 0.7, color: paper })
+    const mod = formatModifier(character.modifiers[ability])
+    page.drawText(mod, { x: x + 51 - bold.widthOfTextAtSize(mod, 8) / 2, y: y - 3.5, size: 8, font: bold, color: rust })
+    y -= 31
+  })
 
-  let y = startY
-  for (const section of sections) {
-    if (!section.text.trim() || y < bottom + size * 2) continue
-    page.drawText(pdfSafe(section.title.toUpperCase()), { x, y, size: size + 0.4, font: bold, color: rust })
-    y -= size * 1.25
-    const maxLines = Math.max(1, Math.floor((y - bottom) / (size * 1.22)))
-    y = drawWrapped(page, section.text, x, y, width, regular, size, size * 1.22, maxLines) - size * 0.45
+  const infoTop = Math.max(y - 1, bottom + 98)
+  const rowHeight = 15
+  const rows = [
+    ["AC", String(character.armorClass)],
+    ["SPEED", character.speed + " ft"],
+    ["SIZE", character.size],
+    ["HIT DICE", character.hitDice],
+  ]
+  rows.forEach(([label, value], i) => {
+    const rowY = infoTop - i * rowHeight
+    page.drawText(label!, { x, y: rowY, size: 7, font: bold, color: rust })
+    page.drawText(pdfSafe(value!), { x: x + 35, y: rowY, size: 8, font: bold, color: ink })
+    if (i < rows.length - 1) page.drawLine({ start: { x, y: rowY - 4 }, end: { x: x + width, y: rowY - 4 }, thickness: 0.3, color: rule })
+  })
+}
+
+const drawHitPoints = (
+  page: PDFPage, character: DerivedCharacter, x: number, y: number, width: number,
+  height: number, regular: PDFFont, bold: PDFFont,
+): void => {
+  drawFrame(page, x, y, width, height, "Hit Points", bold)
+  const splitY = y + 18
+  page.drawLine({ start: { x, y: splitY }, end: { x: x + width, y: splitY }, thickness: 0.7, color: ink })
+  page.drawLine({ start: { x: x + width / 2, y }, end: { x: x + width / 2, y: splitY }, thickness: 0.7, color: ink })
+  page.drawText("CURRENT", { x: x + 7, y: splitY + 6, size: 5.5, font: bold, color: ink })
+  const hp = String(character.maxHp)
+  page.drawText("TEMP HP", { x: x + 6, y: y + 6, size: 5.2, font: regular, color: ink })
+  page.drawText("MAX", { x: x + width / 2 + 6, y: y + 6, size: 5.2, font: regular, color: ink })
+  page.drawText(hp, { x: x + width - 7 - bold.widthOfTextAtSize(hp, 9), y: y + 5, size: 9, font: bold, color: ink })
+}
+
+const drawDeathSaves = (
+  page: PDFPage, x: number, y: number, width: number, height: number,
+  regular: PDFFont, bold: PDFFont,
+): void => {
+  drawFrame(page, x, y, width, height, "Death Saves", bold)
+  const splitX = x + width / 2
+  page.drawLine({ start: { x: splitX, y }, end: { x: splitX, y: y + height - 3 }, thickness: 0.7, color: ink })
+
+  const drawEmptyCircles = (startX: number): void => {
+    ;[0, 1, 2].forEach((index) => page.drawCircle({
+      x: startX + index * 15,
+      y: y + height / 2 - 3,
+      size: 4.4,
+      borderColor: ink,
+      borderWidth: 0.75,
+      color: paper,
+    }))
+  }
+
+  drawEmptyCircles(x + 13)
+  drawEmptyCircles(splitX + 13)
+  const failure = "FAILURES"
+  page.drawText(failure, {
+    x: splitX + (width / 2 - regular.widthOfTextAtSize(failure, 5.2)) / 2,
+    y: y + 6,
+    size: 5.2,
+    font: regular,
+    color: ink,
+  })
+}
+
+const drawSkills = (
+  page: PDFPage, character: DerivedCharacter, x: number, top: number, width: number,
+  regular: PDFFont, bold: PDFFont,
+): void => {
+  let y = top
+  for (const skill of SKILLS) {
+    const ability = skillAbility[skill]!
+    const proficient = character.proficiencies.includes(skill)
+    const value = character.modifiers[ability] + (proficient ? character.proficiencyBonus : 0)
+    page.drawCircle({ x: x + 3, y: y + 1.5, size: 2.6, borderColor: proficient ? rust : muted, borderWidth: 0.65, color: proficient ? ink : paper })
+    page.drawText(pdfSafe(skill), { x: x + 9, y, size: 6.5, font: proficient ? bold : regular, color: ink })
+    const suffix = "(" + ability.toUpperCase() + ")"
+    const suffixWidth = regular.widthOfTextAtSize(suffix, 5)
+    page.drawText(suffix, { x: x + width - 22 - suffixWidth, y: y + 0.4, size: 5, font: regular, color: muted })
+    const score = (value >= 0 ? "+" : "") + value
+    page.drawText(score, { x: x + width - bold.widthOfTextAtSize(score, 7), y, size: 7, font: bold, color: ink })
+    y -= 13
   }
 }
 
-const characterSections = (character: DerivedCharacter): { left: Section[]; right: Section[] } => {
-  const trinket = character.trinket.text
-  const left: Section[] = [
-    { title: "Gear", text: character.gear.join(", ") || "None" },
-    { title: "Proficiencies", text: character.proficiencies.join(", ") || "None" },
-    { title: "Magic & Powers", text: character.magic.join(" | ") || "None" },
-    { title: "Trinket", text: trinket },
+const drawFeatures = (
+  page: PDFPage, features: Feature[], x: number, top: number, width: number,
+  bottom: number, regular: PDFFont, bold: PDFFont,
+): void => {
+  let size = 6.5
+  const estimate = (s: number) => features.reduce((sum, feature) =>
+    sum + s * 1.15 + wrapText(feature.summary, regular, s, width).length * s * 1.13 + 3, 0)
+  while (size > 5.2 && estimate(size) > top - bottom) size -= 0.2
+  let y = top
+  for (const feature of features) {
+    if (y < bottom + size * 2) break
+    page.drawText(pdfSafe(feature.name.toUpperCase()), { x, y, size: size, font: bold, color: rust })
+    y -= size * 1.18
+    const availableLines = Math.max(1, Math.floor((y - bottom) / (size * 1.13)))
+    y = drawWrapped(page, feature.summary, x, y, width, regular, size, ink, size * 1.13, availableLines) - 3
+  }
+}
+
+const drawItems = (
+  page: PDFPage, character: DerivedCharacter, x: number, top: number, width: number,
+  bottom: number, regular: PDFFont, bold: PDFFont,
+): void => {
+  const nonSkills = character.proficiencies.filter((item) => !SKILLS.some((skill) => skill === item))
+  const sections: Feature[] = [
+    { name: "Languages", summary: character.languages.join(", ") || "None" },
+    { name: "Proficiencies", summary: nonSkills.join(", ") || "None" },
+    { name: "Gear", summary: character.gear.join(", ") || "None" },
+    { name: "Trinket", summary: character.trinket.text },
   ]
+  if (character.magic.length) sections.push({ name: "Magic & Powers", summary: character.magic.join(" | ") })
   if (character.status === "deceased" && character.record.causeOfDeath) {
-    left.push({ title: "Cause of Death", text: character.record.causeOfDeath })
+    sections.push({ name: "Cause of Death", summary: character.record.causeOfDeath })
   }
-  const right: Section[] = [
-    {
-      title: "Ancestry Traits",
-      text: character.traits.map((item) => item.name + ": " + item.summary).join(" | "),
-    },
-  ]
-  if (character.record.ancestryChoices.focus) {
-    right.push({ title: "Focus", text: character.record.ancestryChoices.focus })
-  }
-  if (character.record.ancestryChoices.runeTarget) {
-    right.push({ title: "Rune Target", text: character.record.ancestryChoices.runeTarget })
-  }
-  return { left, right }
+  drawFeatures(page, sections, x, top, width, bottom, regular, bold)
 }
 
 const drawCharacter = (
-  page: PDFPage,
-  character: DerivedCharacter,
-  slot: 0 | 1,
-  pageWidth: number,
-  pageHeight: number,
-  regular: PDFFont,
-  bold: PDFFont,
+  page: PDFPage, character: DerivedCharacter, slot: 0 | 1,
+  pageWidth: number, pageHeight: number, regular: PDFFont, bold: PDFFont,
 ): void => {
   const half = pageHeight / 2
   const slotBottom = slot === 0 ? half : 0
-  const marginX = 20
-  const cardBottom = slotBottom + 12
-  const cardTop = slotBottom + half - 12
+  const marginX = 14
+  const cardBottom = slotBottom + 10
+  const cardTop = slotBottom + half - 10
   const cardWidth = pageWidth - marginX * 2
-  page.drawRectangle({
-    x: marginX,
-    y: cardBottom,
-    width: cardWidth,
-    height: cardTop - cardBottom,
-    color: sand,
-    borderColor: rust,
-    borderWidth: 1.25,
-  })
+  page.drawRectangle({ x: marginX, y: cardBottom, width: cardWidth, height: cardTop - cardBottom, borderColor: ink, borderWidth: 1 })
 
-  const x = marginX + 13
-  let y = cardTop - 23
+  const headerY = cardTop - 18
   const name = pdfSafe(character.record.name)
-  let nameSize = 16
-  while (nameSize > 10 && bold.widthOfTextAtSize(name, nameSize) > cardWidth * 0.55) nameSize -= 0.5
-  page.drawText(name, { x, y, size: nameSize, font: bold, color: ink })
-  const subtitle = pdfSafe(character.ancestry.name + " / " + character.occupation.name)
-  const subtitleWidth = regular.widthOfTextAtSize(subtitle, 8.5)
-  page.drawText(subtitle, {
-    x: marginX + cardWidth - 13 - subtitleWidth,
-    y: y + 2,
-    size: 8.5,
-    font: regular,
-    color: muted,
-  })
-  y -= 30
+  let nameSize = 15
+  while (nameSize > 10 && bold.widthOfTextAtSize(name, nameSize) > cardWidth * 0.47) nameSize -= 0.5
+  page.drawText(name, { x: marginX + 10, y: headerY, size: nameSize, font: bold, color: ink })
+  const identity = pdfSafe(character.ancestry.name + " / " + character.occupation.name + (character.status === "deceased" ? " / FALLEN" : ""))
+  page.drawText(identity, { x: marginX + cardWidth - 10 - regular.widthOfTextAtSize(identity, 7.5), y: headerY + 1, size: 7.5, font: regular, color: character.status === "deceased" ? rust : muted })
+  page.drawLine({ start: { x: marginX + 8, y: headerY - 7 }, end: { x: marginX + cardWidth - 8, y: headerY - 7 }, thickness: 0.65, color: rule })
 
-  const statGap = 5
-  const statWidth = (cardWidth - 26 - statGap * 5) / 6
-  ABILITIES.forEach((ability, index) => {
-    const statX = x + index * (statWidth + statGap)
-    page.drawRectangle({ x: statX, y: y - 20, width: statWidth, height: 25, borderColor: muted, borderWidth: 0.6 })
-    page.drawText(ability.toUpperCase(), { x: statX + 4, y: y - 4, size: 6.2, font: bold, color: rust })
-    const value = String(character.finalAbilities[ability]) + " " + formatModifier(character.modifiers[ability])
-    page.drawText(value, { x: statX + 4, y: y - 15, size: 9, font: bold, color: ink })
-  })
-  y -= 36
+  const contentTop = headerY - 20
+  const contentBottom = cardBottom + 10
+  const gap = 7
+  const abilityWidth = 70
+  const skillsWidth = 126
+  const featuresWidth = Math.max(155, cardWidth * 0.32)
+  const itemsWidth = cardWidth - 20 - abilityWidth - skillsWidth - featuresWidth - gap * 3
+  const x1 = marginX + 10
+  const x2 = x1 + abilityWidth + gap
+  const x3 = x2 + skillsWidth + gap
+  const x4 = x3 + featuresWidth + gap
+  const frameY = contentBottom - 4
+  const frameHeight = contentTop - contentBottom + 11
 
-  const vitals = [
-    "HP " + character.maxHp,
-    "AC " + character.armorClass,
-    "PB +2",
-    "HIT DICE " + character.hitDice,
-    "SPEED " + character.speed + " ft.",
-    character.size.toUpperCase(),
-  ]
-  page.drawText(pdfSafe(vitals.join("     ")), { x, y, size: 7.8, font: bold, color: ink })
-  y -= 14
-  page.drawText(pdfSafe("LANGUAGES  " + character.languages.join(", ")), { x, y, size: 7, font: regular, color: muted })
-  y -= 17
-
-  const columns = characterSections(character)
-  const columnGap = 14
-  const columnWidth = (cardWidth - 26 - columnGap) / 2
-  drawSections(page, columns.left, x, y, columnWidth, cardBottom + 12, regular, bold)
-  drawSections(page, columns.right, x + columnWidth + columnGap, y, columnWidth, cardBottom + 12, regular, bold)
+  const hpHeight = 52
+  const hpY = contentTop + 7 - hpHeight
+  const skillsFrameTop = hpY - 7
+  const deathSavesHeight = 40
+  const deathSavesY = frameY
+  const recordFrameY = deathSavesY + deathSavesHeight + 7
+  const recordFrameHeight = contentTop - recordFrameY + 7
+  drawHitPoints(page, character, x2 - 4, hpY, skillsWidth + 8, hpHeight, regular, bold)
+  drawFrame(page, x2 - 4, frameY, skillsWidth + 8, skillsFrameTop - frameY, "Skills / Proficient", bold)
+  drawFrame(page, x3 - 4, frameY, featuresWidth + 8, frameHeight, "Ancestry Features", bold)
+  drawFrame(page, x4 - 4, recordFrameY, itemsWidth + 8, recordFrameHeight, "Record", bold)
+  drawDeathSaves(page, x4 - 4, deathSavesY, itemsWidth + 8, deathSavesHeight, regular, bold)
+  drawAbilityColumn(page, character, x1, contentTop, abilityWidth, contentBottom, bold)
+  drawSkills(page, character, x2, skillsFrameTop - 12, skillsWidth, regular, bold)
+  drawFeatures(page, visibleAncestryFeatures(character), x3, contentTop, featuresWidth, contentBottom, regular, bold)
+  drawItems(page, character, x4, contentTop, itemsWidth, recordFrameY + 5, regular, bold)
 
   if (character.status === "deceased") {
-    const stamp = "DECEASED"
+    const stamp = "FALLEN"
     page.drawText(stamp, {
-      x: marginX + cardWidth / 2 - bold.widthOfTextAtSize(stamp, 28) / 2,
+      x: marginX + cardWidth / 2 - bold.widthOfTextAtSize(stamp, 25) / 2,
       y: slotBottom + half / 2 - 8,
-      size: 28,
-      font: bold,
-      color: rgb(0.65, 0.08, 0.04),
-      rotate: degrees(-12),
-      opacity: 0.3,
+      size: 25, font: bold, color: rust, rotate: degrees(-12), opacity: 0.12,
     })
   }
 }
 
-export const generatePdfBytes = async (
-  records: CharacterRecordV1[],
-  paperSize: PaperSize,
-): Promise<Uint8Array> => {
+export const generatePdfBytes = async (records: CharacterRecordV1[], paperSize: PaperSize): Promise<Uint8Array> => {
   const pdf = await PDFDocument.create()
   pdf.setTitle("Chronicles of Orrin Level-Zero Funnel")
   pdf.setSubject("Printable level-zero funnel characters")
@@ -219,24 +291,14 @@ export const generatePdfBytes = async (
   records.forEach((record, index) => {
     if (index % 2 === 0) {
       const page = pdf.addPage([width, height])
-      page.drawLine({
-        start: { x: 14, y: height / 2 },
-        end: { x: width - 14, y: height / 2 },
-        thickness: 0.5,
-        dashArray: [4, 4],
-        color: muted,
-      })
+      page.drawLine({ start: { x: 12, y: height / 2 }, end: { x: width - 12, y: height / 2 }, thickness: 0.5, dashArray: [4, 4], color: muted })
     }
-    const page = pdf.getPages()[pdf.getPageCount() - 1]
-    drawCharacter(page, deriveCharacter(record), (index % 2) as 0 | 1, width, height, regular, bold)
+    drawCharacter(pdf.getPages()[pdf.getPageCount() - 1]!, deriveCharacter(record), (index % 2) as 0 | 1, width, height, regular, bold)
   })
   return pdf.save()
 }
 
-export const downloadCharacterPdf = async (
-  records: CharacterRecordV1[],
-  paperSize: PaperSize,
-): Promise<void> => {
+export const downloadCharacterPdf = async (records: CharacterRecordV1[], paperSize: PaperSize): Promise<void> => {
   const bytes = await generatePdfBytes(records, paperSize)
   const blob = new Blob([bytes as BlobPart], { type: "application/pdf" })
   const url = URL.createObjectURL(blob)
