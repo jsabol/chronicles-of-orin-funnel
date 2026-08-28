@@ -22,7 +22,7 @@ export function Shell({ children }: { children: ReactNode }) {
           target="_blank"
           rel="noreferrer"
         >
-          SRD 5.1 · CC BY 4.0
+          SRD 5.2 · CC BY 4.0
         </a>
       </footer>
     </div>

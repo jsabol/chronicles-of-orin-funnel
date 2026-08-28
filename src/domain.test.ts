@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { ANCESTRIES, OCCUPATIONS, TRINKETS } from "./data";
+import {
+  ANCESTRIES,
+  CANTRIPS,
+  OCCUPATIONS,
+  SRD_CANTRIP_BY_NAME,
+  TRINKETS,
+} from "./data";
 import {
   abilityModifier,
   createCharacter,
@@ -26,6 +32,22 @@ describe("funnel rules", () => {
     expect(OCCUPATIONS).toHaveLength(20);
     expect(TRINKETS).toHaveLength(20);
   });
+  it("uses the SRD 5.2 cantrip catalog", () => {
+    expect(CANTRIPS).toHaveLength(28);
+    expect(CANTRIPS).toEqual(
+      expect.arrayContaining([
+        "Elementalism",
+        "Sorcerous Burst",
+        "Starry Wisp",
+        "Thorn Whip",
+      ]),
+    );
+    expect(CANTRIPS).not.toEqual(
+      expect.arrayContaining(["Blade Ward", "Friends"]),
+    );
+    expect(SRD_CANTRIP_BY_NAME.get("Chill Touch")?.range).toBe("Touch");
+    expect(SRD_CANTRIP_BY_NAME.get("Thorn Whip")?.range).toBe("30 feet");
+  });
   it("applies ancestry increases and derives HP and AC", () => {
     const c = createCharacter(
       "batch",
@@ -42,6 +64,9 @@ describe("funnel rules", () => {
     expect(d.armorClass).toBe(11);
     expect(d.maxHp).toBe(0);
     expect(d.status).toBe("living");
+    expect(d.gear).toContain(
+      "Improvised weapon [hit -1 | dmg 1d4-1 | thrown 20/60]",
+    );
     c.hpRoll = 0;
     expect(deriveCharacter(c).status).toBe("fallen");
   });

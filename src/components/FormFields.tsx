@@ -11,7 +11,7 @@ type Option = {
 };
 const labelOf = (item: string | Option) =>
   typeof item === "string"
-    ? item.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    ? item.replace(/-/g, " ").replace(/(^|\s)\w/g, (c) => c.toUpperCase())
     : (item.name ?? item.text ?? String(item.id));
 export function SelectField({
   label,

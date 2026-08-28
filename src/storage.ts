@@ -45,6 +45,39 @@ const migrateLegacyStatus = (record: CharacterRecordV1): CharacterRecordV1 =>
   (record.fateOverride as unknown) === "deceased"
     ? { ...record, fateOverride: "fallen" }
     : record;
+
+const srd52CantripReplacements: Readonly<Record<string, string>> = {
+  "Blade Ward": "True Strike",
+  Friends: "Message",
+};
+
+const migrateSrdCantrips = (record: CharacterRecordV1): CharacterRecordV1 => {
+  const ancestryCantrip = record.ancestryChoices.cantrip;
+  const occupationCantrip = record.occupationChoices.cantrip;
+  const nextAncestryCantrip = ancestryCantrip
+    ? (srd52CantripReplacements[ancestryCantrip] ?? ancestryCantrip)
+    : ancestryCantrip;
+  const nextOccupationCantrip = occupationCantrip
+    ? (srd52CantripReplacements[occupationCantrip] ?? occupationCantrip)
+    : occupationCantrip;
+  if (
+    nextAncestryCantrip === ancestryCantrip &&
+    nextOccupationCantrip === occupationCantrip
+  )
+    return record;
+  return {
+    ...record,
+    ancestryChoices: {
+      ...record.ancestryChoices,
+      cantrip: nextAncestryCantrip,
+    },
+    occupationChoices: {
+      ...record.occupationChoices,
+      cantrip: nextOccupationCantrip,
+    },
+  };
+};
+
 const parseState = (raw: string | null): StoredDataV1 => {
   if (!raw) return emptyState();
   const parsed = JSON.parse(raw) as Partial<StoredDataV1>;
@@ -52,7 +85,10 @@ const parseState = (raw: string | null): StoredDataV1 => {
     throw new Error("Unsupported storage schema");
   return {
     version: 1,
-    characters: parsed.characters.filter(isRecord).map(migrateLegacyStatus),
+    characters: parsed.characters
+      .filter(isRecord)
+      .map(migrateLegacyStatus)
+      .map(migrateSrdCantrips),
     paperSize: parsed.paperSize === "a4" ? "a4" : "letter",
   };
 };

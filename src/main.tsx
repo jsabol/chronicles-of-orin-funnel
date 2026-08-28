@@ -1,4 +1,9 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { preloadUsedAssets } from "./preload-assets";
 
-createRoot(document.getElementById("app")!).render(<App />);
+const render = () =>
+  createRoot(document.getElementById("app")!).render(<App />);
+
+render();
+requestAnimationFrame(() => void preloadUsedAssets());

@@ -33,4 +33,22 @@ describe("character storage", () => {
     expect(store.warning).toBeTruthy();
     expect(store.getState().characters).toEqual([]);
   });
+  it("migrates removed SRD 5.1 cantrip choices", () => {
+    const memory = new MemoryStorage();
+    const character = createCharacter("legacy");
+    character.ancestryChoices = { cantrip: "Blade Ward" };
+    character.occupationChoices = { cantrip: "Friends" };
+    memory.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        characters: [character],
+        paperSize: "letter",
+      }),
+    );
+
+    const restored = createCharacterStore(memory).getState().characters[0];
+    expect(restored?.ancestryChoices.cantrip).toBe("True Strike");
+    expect(restored?.occupationChoices.cantrip).toBe("Message");
+  });
 });

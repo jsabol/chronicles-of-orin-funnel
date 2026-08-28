@@ -28,18 +28,26 @@
 
 .brand {
   display: grid;
+  height: 100%;
+  box-sizing: border-box;
   place-items: center;
-  padding: 0 58px;
+  padding-inline: 58px;
   color: inherit;
   text-align: center;
   text-decoration: none;
+  overflow: hidden;
   border-inline: 1px solid rgba(174, 112, 60, 0.28);
   background-color: rgba(10, 9, 8, 0.94);
 
   img {
     display: block;
     width: clamp(205px, 24vw, 300px);
-    height: 114px;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    padding-block: 20px;
     object-fit: contain;
   }
 }
@@ -77,11 +85,9 @@
   }
 
   .brand {
-    padding-inline: 30px;
-
     img {
       width: 190px;
-      height: 68px;
+      padding-block: 12px;
     }
   }
 
@@ -93,10 +99,5 @@
 @media (max-width: v.$small-mobile-breakpoint) {
   .brand {
     border: 0;
-
-    img {
-      width: 160px;
-      height: 62px;
-    }
   }
 }

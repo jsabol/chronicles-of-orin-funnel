@@ -42,10 +42,10 @@ const languages = [
   ...EXOTIC_LANGUAGES,
 ];
 const sortedOccupations = [...OCCUPATIONS].sort((a, b) =>
-  a.name.localeCompare(b.name)
+  a.name.localeCompare(b.name),
 );
 const sortedAncestries = [...ANCESTRIES].sort((a, b) =>
-  a.name.localeCompare(b.name)
+  a.name.localeCompare(b.name),
 );
 const skillAbilities: Record<string, Ability> = {
   Acrobatics: "dex",
@@ -497,7 +497,7 @@ export function Editor({
                     save((c) => {
                       c.occupationId = Number(v);
                       c.occupationChoices = generateOccupationChoices(
-                        Number(v)
+                        Number(v),
                       );
                     })
                   }
@@ -605,7 +605,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
       summary: record.ancestryChoices.runeTarget,
     });
   const nonSkills = d.proficiencies.filter(
-    (item) => !SKILLS.includes(item as (typeof SKILLS)[number])
+    (item) => !SKILLS.includes(item as (typeof SKILLS)[number]),
   );
   return (
     <aside className={`${styles.derived} ${styles.panel} ${styles[d.status]}`}>
@@ -643,16 +643,6 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
         <dt>Gear</dt>
         <dd>{d.gear.join(", ") || "None"}</dd>
       </dl>
-      <section className={styles.improvisedWeapon}>
-        <h2>Improvised Weapon</h2>
-        <p className={styles.improvisedWeaponStats}>
-          <strong>1d4 damage</strong> · Thrown (20/60 ft.)
-        </p>
-        <p className={styles.improvisedWeaponNote}>
-          The GM chooses a damage type appropriate to the object. No proficiency
-          applies unless it resembles a weapon the character is proficient with.
-        </p>
-      </section>
       {visibleTraits.length > 0 && (
         <section className={styles.ancestryFeatures}>
           <h2>Ancestry Features</h2>

@@ -326,14 +326,13 @@
   }
 
   small {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
 .calculatedSkills,
 .ancestryFeatures,
-.recordMagic,
-.improvisedWeapon {
+.recordMagic {
   margin: 22px 0;
 
   h2 {
@@ -347,22 +346,6 @@
     padding: 0;
     list-style: none;
   }
-}
-
-.improvisedWeapon {
-  padding: 12px 14px;
-  border: 1px solid #6f5b41;
-  background: rgba(10, 9, 8, 0.45);
-}
-
-.improvisedWeaponStats {
-  margin: 0;
-  font: 600 17px/1.35 v.$font-sans;
-}
-
-.improvisedWeaponNote {
-  margin: 5px 0 0;
-  font: 500 14px/1.35 v.$font-serif;
 }
 
 .calculatedSkills {
@@ -475,10 +458,6 @@
   .formGrid,
   .abilityFields {
     grid-template-columns: 1fr;
-  }
-
-  .stats {
-    font-size: 15px;
   }
 }
 

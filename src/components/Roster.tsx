@@ -209,7 +209,15 @@ export function Roster({
             </b>{" "}
             {state.characters.length === 1 ? "character" : "characters"}
           </p>
-          <span className={styles.doomRule}>◇—☠—◇</span>
+          <span className={styles.doomRule} aria-hidden="true">
+            <span>◇—</span>
+            <img
+              className={styles.doomRuleSkull}
+              src={asset("skull.svg")}
+              alt=""
+            />
+            <span>—◇</span>
+          </span>
         </div>
       </section>
       <section className={styles.funnelActions}>

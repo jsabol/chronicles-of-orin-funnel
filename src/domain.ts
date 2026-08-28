@@ -75,6 +75,10 @@ const weaponGear = (
   modifiers: AbilityScores,
   proficiencies: string[],
 ): string => {
+  if (entry === "Improvised weapon") {
+    const ability = modifiers.str;
+    return `${entry} [hit ${formatModifier(ability)} | dmg 1d4${formatModifier(ability)} | thrown 20/60]`;
+  }
   const daggerMatch = entry.match(/^(\d+ )?(?:obsidian )?daggers?$/i);
   if (!daggerMatch) return entry;
   const ability = Math.max(modifiers.str, modifiers.dex);
@@ -335,7 +339,10 @@ export const deriveCharacter = (
   const languages = [...ancestry.languages];
   const traits = [...ancestry.traits];
   const magic: string[] = [];
-  const gear = occupation.gear !== "Nothing" ? [occupation.gear] : [];
+  const gear = [
+    ...(occupation.gear !== "Nothing" ? [occupation.gear] : []),
+    "Improvised weapon",
+  ];
 
   if (!occupation.special && occupation.proficiency !== "Nothing")
     proficiencies.push(occupation.proficiency);
