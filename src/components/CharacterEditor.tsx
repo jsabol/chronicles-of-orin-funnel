@@ -399,9 +399,7 @@ export function Editor({
             Eliminate
           </button>
         </div>
-        <p className="eyebrow">Level-zero record</p>
         <h1 className={`character-name ${d.status}`}>
-          
           {d.status === "fallen" && (
             <img
               className="fallen-icon"
@@ -414,6 +412,12 @@ export function Editor({
         <p className={`status-line ${d.status}`}>
           {d.status} · {d.ancestry.name} · {d.occupation.name}
         </p>
+        {d.status === "fallen" && (
+          <p className="cause-of-death">
+            <strong>Cause of death:</strong>{" "}
+            <em>{draft.causeOfDeath || "Not recorded"}</em>
+          </p>
+        )}
       </div>
       <form id="character-form" onSubmit={(e) => e.preventDefault()}>
         {errors.length > 0 && (

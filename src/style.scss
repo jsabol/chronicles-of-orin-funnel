@@ -388,8 +388,8 @@ button,
   gap: 20px;
 }
 .editor-head-actions .danger {
-  color: #f1dfb9;
-  background: #8b2113;
+  color: #8b2113;
+  background: transparent;
   border-color: #8b2113;
 }
 .editor-head h1 {
@@ -742,8 +742,9 @@ body {
 .brand {
   text-align: center;
   place-items: center;
-  padding: 4px 58px 0;
+  padding: 0px 58px 0;
   border-inline: 1px solid rgba(174, 112, 60, 0.28);
+  background-color: rgba(10, 9, 8, 0.94);
 }
 .brand span {
   font-style: normal;
@@ -1255,7 +1256,7 @@ footer {
 .brand img {
   display: block;
   width: clamp(205px, 24vw, 300px);
-  height: 92px;
+  height: 114px;
   object-fit: contain;
 }
 @media (max-width: 800px) {
@@ -1567,4 +1568,21 @@ footer {
 .character-card.fallen .fate-copy h3,
 .character-name.fallen {
   color: #8b2113;
+}
+
+.cause-of-death {
+  margin: -0.5rem 0 0;
+  color: #8b2113;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.cause-of-death em {
+  color: #d7bd94;
+  font-family: Newsreader, serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
 }
