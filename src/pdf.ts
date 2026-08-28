@@ -479,7 +479,7 @@ const drawItems = (
     { name: "Gear", summary: character.gear.join(", ") || "None" },
     { name: "Trinket", summary: character.trinket.text },
   ];
-  if (character.status === "deceased" && character.record.causeOfDeath) {
+  if (character.status === "fallen" && character.record.causeOfDeath) {
     sections.push({
       name: "Cause of Death",
       summary: character.record.causeOfDeath,
@@ -531,14 +531,14 @@ const drawCharacter = (
     character.ancestry.name +
       " / " +
       character.occupation.name +
-      (character.status === "deceased" ? " / FALLEN" : ""),
+      (character.status === "fallen" ? " / FALLEN" : ""),
   );
   page.drawText(identity, {
     x: marginX + cardWidth - 10 - regular.widthOfTextAtSize(identity, 7.5),
     y: headerY + 1,
     size: 7.5,
     font: regular,
-    color: character.status === "deceased" ? rust : muted,
+    color: character.status === "fallen" ? rust : muted,
   });
   page.drawLine({
     start: { x: marginX + 8, y: headerY - 7 },
@@ -654,7 +654,7 @@ const drawCharacter = (
     bold,
   );
 
-  if (character.status === "deceased") {
+  if (character.status === "fallen") {
     const stamp = "FALLEN";
     page.drawText(stamp, {
       x: marginX + cardWidth / 2 - bold.widthOfTextAtSize(stamp, 25) / 2,

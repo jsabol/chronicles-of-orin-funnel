@@ -41,6 +41,10 @@ const isRecord = (value: unknown): value is CharacterRecordV1 => {
   );
 };
 
+const migrateLegacyStatus = (record: CharacterRecordV1): CharacterRecordV1 =>
+  (record.fateOverride as unknown) === "deceased"
+    ? { ...record, fateOverride: "fallen" }
+    : record;
 const parseState = (raw: string | null): StoredDataV1 => {
   if (!raw) return emptyState();
   const parsed = JSON.parse(raw) as Partial<StoredDataV1>;
@@ -48,7 +52,7 @@ const parseState = (raw: string | null): StoredDataV1 => {
     throw new Error("Unsupported storage schema");
   return {
     version: 1,
-    characters: parsed.characters.filter(isRecord),
+    characters: parsed.characters.filter(isRecord).map(migrateLegacyStatus),
     paperSize: parsed.paperSize === "a4" ? "a4" : "letter",
   };
 };
@@ -117,7 +121,9 @@ export const createCharacterStore = (storage?: StorageLike): CharacterStore => {
       const idsToDelete = new Set(ids);
       state = {
         ...state,
-        characters: state.characters.filter((item) => !idsToDelete.has(item.id)),
+        characters: state.characters.filter(
+          (item) => !idsToDelete.has(item.id),
+        ),
       };
       persist();
     },

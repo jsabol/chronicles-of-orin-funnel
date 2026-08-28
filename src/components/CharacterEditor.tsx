@@ -25,7 +25,7 @@ import {
   generateOccupationChoices,
   validateCharacter,
 } from "../domain";
-import { store } from "../app-store";
+import { asset, store } from "../app-store";
 import { SelectField, TextField, TrinketField } from "./FormFields";
 
 type Option = {
@@ -400,12 +400,28 @@ export function Editor({
           </button>
         </div>
         <p className="eyebrow">Level-zero record</p>
-        <h1>{draft.name}</h1>
+        <h1 className="character-name">
+          {draft.name}
+          {d.status === "fallen" && (
+            <img
+              className="fallen-icon"
+              src={asset("fallen-mark.webp")}
+              alt=""
+            />
+          )}
+        </h1>
         <p className={`status-line ${d.status}`}>
           {d.status} · {d.ancestry.name} · {d.occupation.name}
         </p>
       </div>
       <form id="character-form" onSubmit={(e) => e.preventDefault()}>
+        {errors.length > 0 && (
+          <div className="validation" role="alert">
+            {errors.map((error) => (
+              <p key={error}>{error}</p>
+            ))}
+          </div>
+        )}
         <section className="sheet-grid">
           <div>
             <div className="panel">
@@ -468,16 +484,16 @@ export function Editor({
                   value={d.status}
                   options={[
                     { id: "living", name: "Living" },
-                    { id: "deceased", name: "Fallen" },
+                    { id: "fallen", name: "Fallen" },
                   ]}
                   onChange={(v) =>
                     save((c) => {
-                      c.fateOverride = v as "living" | "deceased";
+                      c.fateOverride = v as "living" | "fallen";
                       if (v === "living") c.causeOfDeath = "";
                     })
                   }
                 />
-                {d.status === "deceased" && (
+                {d.status === "fallen" && (
                   <TextField
                     label="Cause of death"
                     value={draft.causeOfDeath ?? ""}
@@ -516,13 +532,6 @@ export function Editor({
           </div>
           <Derived record={draft} />
         </section>
-        {errors.length > 0 && (
-          <div className="validation" role="alert">
-            {errors.map((error) => (
-              <p key={error}>{error}</p>
-            ))}
-          </div>
-        )}
       </form>
       {confirmingDelete && (
         <DeleteDialog

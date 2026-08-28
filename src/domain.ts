@@ -443,7 +443,7 @@ export const deriveCharacter = (
     proficiencyBonus: 2,
     armorClass,
     maxHp,
-    status: record.fateOverride ?? (maxHp < 0 ? "deceased" : "living"),
+    status: record.fateOverride ?? (maxHp < 0 ? "fallen" : "living"),
     hitDice: record.ancestryId === "human" ? "3d4" : "1d4",
     speed,
     size: ancestry.size,

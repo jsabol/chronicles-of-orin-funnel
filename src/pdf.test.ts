@@ -19,7 +19,7 @@ describe("print output", () => {
       ]);
     },
   );
-  it("prints deceased records", async () => {
+  it("prints fallen records", async () => {
     const c = createCharacter("b");
     c.rawAbilities.con = 3;
     c.hpRoll = 1;

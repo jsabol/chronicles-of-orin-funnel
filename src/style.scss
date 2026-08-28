@@ -220,12 +220,12 @@ button,
   box-shadow: 8px 9px 0 $rust;
   outline: none;
 }
-.character-card.deceased {
+.character-card.fallen {
   filter: grayscale(0.85);
   background: #c4baaa;
 }
-.character-card.deceased:after {
-  content: "DECEASED";
+.character-card.fallen:after {
+  content: "FALLEN";
   position: absolute;
   inset: 44% 8% auto;
   transform: rotate(-8deg);
@@ -391,6 +391,17 @@ button,
 .editor-head h1 {
   font-size: 64px;
 }
+.character-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.fallen-icon {
+  width: 0.7em;
+  height: 0.7em;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
 .back {
   color: $ink;
   font-weight: 700;
@@ -400,7 +411,7 @@ button,
   font-weight: 800;
   letter-spacing: 0.16em;
 }
-.status-line.deceased {
+.status-line.fallen {
   color: $rust;
 }
 .sheet-grid {
@@ -480,7 +491,7 @@ button,
   top: 20px;
   align-self: start;
 }
-.derived.deceased {
+.derived.fallen {
   border-color: $rust;
 }
 .big-vitals {
@@ -518,7 +529,13 @@ button,
 }
 .validation {
   margin: 20px 0;
-  border: 3px solid $rust;
+  background: $rust;
+  border: 3px solid #c45a3d;
+  color: $light;
+  box-shadow: 5px 5px 0 rgba(23, 18, 14, 0.35);
+}
+.validation p {
+  margin: 4px 0;
 }
 .editor-actions {
   display: flex;
@@ -925,11 +942,11 @@ main {
     0 0 0 1px #b46a40,
     0 7px 15px #000;
 }
-.character-card.deceased {
+.character-card.fallen {
   filter: none;
   background-color: rgba(10, 9, 8, 0.94);
 }
-.character-card.deceased:after {
+.character-card.fallen:after {
   display: none;
 }
 .fate-copy {
@@ -999,7 +1016,7 @@ main {
     serif;
   color: #77944c;
 }
-.deceased .fate-seal strong {
+.fallen .fate-seal strong {
   color: #bf4227;
 }
 .character-card > .icon-button {

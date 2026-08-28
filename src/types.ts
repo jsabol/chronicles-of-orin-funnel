@@ -2,7 +2,7 @@ export const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"] as const;
 
 export type Ability = (typeof ABILITIES)[number];
 export type AbilityScores = Record<Ability, number>;
-export type CharacterStatus = "living" | "deceased";
+export type CharacterStatus = "living" | "fallen";
 export type PaperSize = "letter" | "a4";
 
 export interface AncestryChoices {

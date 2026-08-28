@@ -43,7 +43,7 @@ describe("funnel rules", () => {
     expect(d.maxHp).toBe(0);
     expect(d.status).toBe("living");
     c.hpRoll = 0;
-    expect(deriveCharacter(c).status).toBe("deceased");
+    expect(deriveCharacter(c).status).toBe("fallen");
   });
   it("retains deaths while rolling until four living characters exist", () => {
     const batch = createFunnelBatch(
@@ -58,9 +58,9 @@ describe("funnel rules", () => {
   });
   it("allows an explicit fate and cause of death", () => {
     const c = createCharacter("batch");
-    c.fateOverride = "deceased";
+    c.fateOverride = "fallen";
     c.causeOfDeath = "Taken by the red storm";
-    expect(deriveCharacter(c).status).toBe("deceased");
+    expect(deriveCharacter(c).status).toBe("fallen");
     c.fateOverride = "living";
     expect(deriveCharacter(c).status).toBe("living");
   });

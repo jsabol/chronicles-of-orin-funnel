@@ -4,7 +4,7 @@ import { createFunnelBatch, cryptoRandom, deriveCharacter } from "../domain";
 import { downloadCharacterPdf } from "../pdf";
 import { asset, store } from "../app-store";
 
-type Filter = "all" | "living" | "deceased";
+type Filter = "all" | "living" | "fallen";
 function CharacterCard({
   character,
   selecting,
@@ -44,7 +44,7 @@ function CharacterCard({
         <p>
           {derived.ancestry.name} <i>◆</i> {derived.occupation.name}
         </p>
-        {derived.status === "deceased" && character.causeOfDeath && (
+        {derived.status === "fallen" && character.causeOfDeath && (
           <p className="death-cause">{character.causeOfDeath}</p>
         )}
         <div className="fate-vitals">
@@ -218,13 +218,13 @@ export function Roster({
           <i />
         </div>
         <nav className="fate-filters" aria-label="Filter recorded fates">
-          {(["all", "living", "deceased"] as Filter[]).map((value) => (
+          {(["all", "living", "fallen"] as Filter[]).map((value) => (
             <button
               key={value}
               className={filter === value ? "active" : ""}
               onClick={() => setFilter(value)}
             >
-              {value === "deceased"
+              {value === "fallen"
                 ? "☠ Fallen"
                 : `◇ ${value === "all" ? "All" : "Living"}`}
             </button>
