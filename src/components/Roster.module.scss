@@ -51,7 +51,7 @@
 .doomCopyTitle {
   margin: 0;
   color: #dcc9a7;
-  font: 900 60px / 0.9 v.$font-display;
+  font: 600 60px / 0.9 v.$font-display;
   letter-spacing: normal;
   text-transform: uppercase;
   text-shadow: 3px 3px 0 #120b07;
@@ -297,12 +297,6 @@
 .fallen {
   background: #0a0908;
 }
-.fallenFateTitle {
-  color: v.$dark-rust;
-}
-.fallenFateSealLabel {
-  color: #bf4227;
-}
 .check {
   position: absolute;
   right: 10px;
@@ -325,15 +319,15 @@
 .fateTitle {
   margin: 0 0 8px;
   color: #d6bd98;
-  font: 900 31px/1 v.$font-display;
+  font: 600 31px/1 v.$font-display;
   letter-spacing: normal;
   text-transform: uppercase;
   @media (max-width: v.$tablet-breakpoint) {
     font-size: 26px;
   }
-  @media (max-width: v.$small-mobile-breakpoint) {
-    font-size: 23px;
-  }
+}
+.fallenFateTitle {
+  color: v.$dark-rust;
 }
 .fateDescription {
   margin: 0 0 18px;
@@ -341,7 +335,7 @@
   font: 500 18px v.$font-sans;
   @media (max-width: v.$tablet-breakpoint) {
     margin-bottom: 15px;
-    font-size: 16px;
+    font-size: 17px;
   }
 }
 .fateDescriptionSeparator {
@@ -356,7 +350,7 @@
 }
 .deathCause::before {
   content: "Cause: ";
-  font: 700 12px v.$font-sans;
+  font: 700 14px v.$font-sans;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -412,9 +406,9 @@
   color: #77944c;
   font: 600 17px v.$font-sans;
   text-transform: uppercase;
-  @media (max-width: v.$tablet-breakpoint) {
-    font-size: 14px;
-  }
+}
+.fallenFateSealLabel {
+  color: #bf4227;
 }
 .empty {
   margin-top: 36px;

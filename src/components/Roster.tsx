@@ -290,6 +290,9 @@ export function Roster({
               onToggle={() => toggle(c.id)}
               onOpen={() => {
                 location.hash = `#/characters/${c.id}`;
+                requestAnimationFrame(() =>
+                  window.scrollTo({ top: 0, behavior: "smooth" }),
+                );
               }}
             />
           ))}

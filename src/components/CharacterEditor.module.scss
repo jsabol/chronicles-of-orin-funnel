@@ -48,7 +48,7 @@
   align-items: center;
   gap: 14px;
   margin: 0;
-  font: 900 64px/0.82 v.$font-display;
+  font: 600 64px/0.82 v.$font-display;
   letter-spacing: normal;
   text-transform: uppercase;
   mask-image:
@@ -149,6 +149,27 @@
   }
 }
 
+.panelTitleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid v.$ink;
+}
+
+.panelTitleRow .panelTitle {
+  margin: 0;
+  border: 0;
+}
+
+.hpRoll {
+  flex: 0 0 auto;
+  font: 700 18px v.$font-sans;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .formGrid,
 .abilityFields {
   display: grid;
@@ -167,7 +188,7 @@
   text-transform: uppercase;
 
   > span {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   > div {
@@ -305,13 +326,14 @@
   }
 
   small {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
 .calculatedSkills,
 .ancestryFeatures,
-.recordMagic {
+.recordMagic,
+.improvisedWeapon {
   margin: 22px 0;
 
   h2 {
@@ -325,6 +347,22 @@
     padding: 0;
     list-style: none;
   }
+}
+
+.improvisedWeapon {
+  padding: 12px 14px;
+  border: 1px solid #6f5b41;
+  background: rgba(10, 9, 8, 0.45);
+}
+
+.improvisedWeaponStats {
+  margin: 0;
+  font: 600 17px/1.35 v.$font-sans;
+}
+
+.improvisedWeaponNote {
+  margin: 5px 0 0;
+  font: 500 14px/1.35 v.$font-serif;
 }
 
 .calculatedSkills {
@@ -402,7 +440,7 @@
   color: v.$ink;
 
   h2 {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
     font-size: 34px;
     text-transform: uppercase;
   }

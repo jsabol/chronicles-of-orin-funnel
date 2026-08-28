@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import Choices from "choices.js";
 import { TRINKETS } from "../data";
 import styles from "./FormFields.module.scss";
@@ -26,13 +26,54 @@ export function SelectField({
   onChange: (value: string) => void;
   disabled?: boolean;
 }) {
+  const fieldId = useId();
+  const select = useRef<HTMLSelectElement>(null);
+  const choices = useRef<Choices | null>(null);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    const element = select.current;
+    if (!element) return;
+
+    const instance = new Choices(element, {
+      searchEnabled: false,
+      shouldSort: false,
+      itemSelectText: "",
+      allowHTML: false,
+    });
+    choices.current = instance;
+    const changed = () => onChangeRef.current(element.value);
+    element.addEventListener("change", changed);
+
+    return () => {
+      element.removeEventListener("change", changed);
+      instance.destroy();
+      choices.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    choices.current?.setChoiceByValue(String(value ?? ""));
+  }, [value]);
+
+  useEffect(() => {
+    if (disabled) choices.current?.disable();
+    else choices.current?.enable();
+  }, [disabled]);
+
   return (
-    <label className={styles.field}>
-      <span>{label}</span>
+    <div className={styles.field}>
+      <label htmlFor={fieldId}>{label}</label>
       <div>
         <select
-          value={value ?? ""}
-          onChange={(e) => onChange(e.target.value)}
+          id={fieldId}
+          ref={select}
+          autoComplete="off"
+          defaultValue={value ?? ""}
           disabled={disabled}
         >
           {options.map((item) => {
@@ -45,7 +86,7 @@ export function SelectField({
           })}
         </select>
       </div>
-    </label>
+    </div>
   );
 }
 export function TextField({
@@ -67,6 +108,7 @@ export function TextField({
       <div>
         <input
           type={type}
+          autoComplete="off"
           value={value}
           readOnly={readOnly}
           min={type === "number" ? 1 : undefined}
@@ -107,7 +149,12 @@ export function TrinketField({
     <div className={styles.field}>
       <label htmlFor="field-trinket">Trinket</label>
       <div>
-        <select id="field-trinket" ref={select} defaultValue={String(value)}>
+        <select
+          id="field-trinket"
+          ref={select}
+          autoComplete="off"
+          defaultValue={String(value)}
+        >
           {TRINKETS.map((item) => (
             <option key={item.id} value={item.id}>
               {item.text}

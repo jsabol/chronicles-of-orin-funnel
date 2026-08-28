@@ -41,6 +41,12 @@ const languages = [
   ...UNCOMMON_LANGUAGES,
   ...EXOTIC_LANGUAGES,
 ];
+const sortedOccupations = [...OCCUPATIONS].sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+const sortedAncestries = [...ANCESTRIES].sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
 const skillAbilities: Record<string, Ability> = {
   Acrobatics: "dex",
   "Animal Handling": "wis",
@@ -426,6 +432,7 @@ export function Editor({
       <form
         id="character-form"
         className={styles.form}
+        autoComplete="off"
         onSubmit={(e) => e.preventDefault()}
       >
         {errors.length > 0 && (
@@ -445,6 +452,9 @@ export function Editor({
                   <div>
                     <input
                       type="text"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
                       value={draft.name}
                       maxLength={60}
                       onChange={(event) =>
@@ -471,7 +481,7 @@ export function Editor({
                 <SelectField
                   label="Ancestry"
                   value={draft.ancestryId}
-                  options={ANCESTRIES}
+                  options={sortedAncestries}
                   onChange={(v) =>
                     save((c) => {
                       c.ancestryId = v;
@@ -482,12 +492,12 @@ export function Editor({
                 <SelectField
                   label="Occupation"
                   value={draft.occupationId}
-                  options={OCCUPATIONS}
+                  options={sortedOccupations}
                   onChange={(v) =>
                     save((c) => {
                       c.occupationId = Number(v);
                       c.occupationChoices = generateOccupationChoices(
-                        Number(v),
+                        Number(v)
                       );
                     })
                   }
@@ -503,14 +513,13 @@ export function Editor({
               </div>
             </div>
             <div className={styles.panel}>
-              <h2>Life & choices</h2>
+              <div className={styles.panelTitleRow}>
+                <h2 className={styles.panelTitle}>Life & choices</h2>
+                <span className={styles.hpRoll}>
+                  HP d4 Result: {draft.hpRoll}
+                </span>
+              </div>
               <div className={styles.formGrid}>
-                <TextField
-                  label="Hit point d4"
-                  value={draft.hpRoll}
-                  type="number"
-                  readOnly
-                />
                 <SelectField
                   label="Fate"
                   value={d.status}
@@ -591,12 +600,12 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
     });
   if (record.ancestryChoices.runeTarget)
     visibleTraits.push({
-      id: "rune",
+      id: "rune-target",
       name: "Rune Target",
       summary: record.ancestryChoices.runeTarget,
     });
   const nonSkills = d.proficiencies.filter(
-    (item) => !SKILLS.includes(item as (typeof SKILLS)[number]),
+    (item) => !SKILLS.includes(item as (typeof SKILLS)[number])
   );
   return (
     <aside className={`${styles.derived} ${styles.panel} ${styles[d.status]}`}>
@@ -634,6 +643,16 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
         <dt>Gear</dt>
         <dd>{d.gear.join(", ") || "None"}</dd>
       </dl>
+      <section className={styles.improvisedWeapon}>
+        <h2>Improvised Weapon</h2>
+        <p className={styles.improvisedWeaponStats}>
+          <strong>1d4 damage</strong> · Thrown (20/60 ft.)
+        </p>
+        <p className={styles.improvisedWeaponNote}>
+          The GM chooses a damage type appropriate to the object. No proficiency
+          applies unless it resembles a weapon the character is proficient with.
+        </p>
+      </section>
       {visibleTraits.length > 0 && (
         <section className={styles.ancestryFeatures}>
           <h2>Ancestry Features</h2>

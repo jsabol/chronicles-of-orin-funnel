@@ -9,7 +9,7 @@
   > span,
   > label {
     display: block;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   > label {
@@ -53,6 +53,13 @@
     text-transform: none;
   }
 
+  :global(.choices__inner),
+  :global(.choices__input),
+  :global(.choices__list),
+  :global(.choices__item) {
+    font: 600 16px/1.25 v.$font-sans !important;
+  }
+
   :global(.choices__inner) {
     min-height: 45px;
     padding: 8px 34px 5px 10px;
@@ -89,7 +96,11 @@
     }
 
     :global(.choices__item--selectable.is-highlighted) {
-      background: v.$sand;
+      background: #dedbd5;
+    }
+
+    :global(.choices__item--selectable.is-selected) {
+      background: v.$muted-gold;
     }
   }
 
