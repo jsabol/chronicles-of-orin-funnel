@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ABILITIES, type Ability, type CharacterRecordV1 } from "../types";
 import {
   ANCESTRIES,
@@ -106,6 +106,50 @@ function TraitPicker({
   );
 }
 
+function DeleteDialog({
+  name,
+  onCancel,
+  onConfirm,
+}: {
+  name: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    dialog.current?.showModal();
+    return () => dialog.current?.close();
+  }, []);
+  return (
+    <dialog
+      ref={dialog}
+      className="delete-dialog"
+      onCancel={(event) => {
+        event.preventDefault();
+        onCancel();
+      }}
+    >
+      <p className="eyebrow">Final warning</p>
+      <h2>Eliminate character?</h2>
+      <p>
+        Are you sure you want to delete <strong>{name}</strong>?
+      </p>
+      <div>
+        <button type="button" className="secondary" onClick={onCancel}>
+          Cancel
+        </button>
+        <button
+          type="button"
+          className="danger delete-action"
+          onClick={onConfirm}
+        >
+          <span className="trash-icon" aria-hidden="true" />
+          Eliminate
+        </button>
+      </div>
+    </dialog>
+  );
+}
 export function Editor({
   id,
   state,
@@ -119,6 +163,7 @@ export function Editor({
   const [draft, setDraft] = useState<CharacterRecordV1 | null>(
     original ? structuredClone(original) : null,
   );
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   useEffect(() => setDraft(original ? structuredClone(original) : null), [id]);
   if (!draft) return <p>Character not found.</p>;
   const save = (change: (record: CharacterRecordV1) => void) => {
@@ -341,9 +386,19 @@ export function Editor({
   return (
     <>
       <div className="editor-head">
-        <a href="#/" className="back">
-          ← Return to roster
-        </a>
+        <div className="editor-head-actions">
+          <a href="#/" className="back">
+            ← Return to roster
+          </a>
+          <button
+            type="button"
+            className="danger delete-action"
+            onClick={() => setConfirmingDelete(true)}
+          >
+            <span className="trash-icon" aria-hidden="true" />
+            Eliminate
+          </button>
+        </div>
         <p className="eyebrow">Level-zero record</p>
         <h1>{draft.name}</h1>
         <p className={`status-line ${d.status}`}>
@@ -468,22 +523,19 @@ export function Editor({
             ))}
           </div>
         )}
-        <div className="editor-actions">
-          <button
-            type="button"
-            className="danger"
-            onClick={() => {
-              if (confirm(`Remove ${draft.name} from the ledger?`)) {
-                store.deleteCharacter(draft.id);
-                refresh();
-                location.hash = "#/";
-              }
-            }}
-          >
-            Delete
-          </button>
-        </div>
       </form>
+      {confirmingDelete && (
+        <DeleteDialog
+          name={draft.name}
+          onCancel={() => setConfirmingDelete(false)}
+          onConfirm={() => {
+            store.deleteCharacter(draft.id);
+            setConfirmingDelete(false);
+            refresh();
+            location.hash = "#/";
+          }}
+        />
+      )}
     </>
   );
 }

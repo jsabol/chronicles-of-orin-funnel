@@ -339,7 +339,8 @@ button,
   justify-content: flex-end;
   gap: 12px;
   margin-top: 22px;
-}.deletion-actions .secondary {
+}
+.deletion-actions .secondary {
   background: #181611 url("/assets/iron.webp") center/520px;
   border-color: #a88159;
   color: #e6c49a;
@@ -375,6 +376,17 @@ button,
 .editor-head {
   padding: 45px 0 25px;
   border-bottom: 5px solid $ink;
+}
+.editor-head-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.editor-head-actions .danger {
+  color: #f1dfb9;
+  background: #8b2113;
+  border-color: #8b2113;
 }
 .editor-head h1 {
   font-size: 64px;
@@ -521,6 +533,18 @@ button,
   background: transparent;
   border-color: $rust;
 }
+.delete-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.trash-icon {
+  width: 0.9em;
+  height: 1em;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  mask: url("/assets/fa-trash.svg") center/contain no-repeat;
+}
 dialog {
   border: 5px solid $ink;
   background: $paper;
@@ -533,6 +557,29 @@ dialog::backdrop {
 .print-dialog h2 {
   font-size: 36px;
   text-transform: uppercase;
+}
+.delete-dialog {
+  color: $ink;
+  min-width: min(420px, calc(100vw - 48px));
+}
+.delete-dialog h2 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  text-transform: uppercase;
+}
+.delete-dialog > p:not(.eyebrow) {
+  font:
+    500 18px/1.45 Newsreader,
+    serif;
+}
+.delete-dialog > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.delete-dialog .danger {
+  background: #f1dfb9;
 }
 .print-dialog > label {
   display: block;
@@ -1143,6 +1190,9 @@ footer {
 }
 #character-form .panel {
   background: #f3e3bd url("/assets/parchment.webp") center/760px;
+}
+#character-form .derived {
+  background-image: none;
 }
 #character-form .panel p,
 #character-form .derived dd {

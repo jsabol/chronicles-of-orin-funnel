@@ -282,11 +282,16 @@ export function Roster({
         {state.characters.length > 0 && !selecting && (
           <div className="deletion-actions">
             <button
-              className="danger"
+              className="danger delete-action"
               disabled={deleting && selected.size === 0}
               onClick={() => (deleting ? confirmDeletion() : setDeleting(true))}
             >
-              {deleting ? `Confirm delete ${selected.size}` : "Mass deletion"}
+              <span className="trash-icon" aria-hidden="true" />
+              <span>
+                {deleting
+                  ? `Confirm delete ${selected.size}`
+                  : "Mass elimination"}
+              </span>
             </button>
             {deleting && (
               <button className="secondary" onClick={endDeletion}>

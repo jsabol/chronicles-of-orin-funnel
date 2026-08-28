@@ -1,0 +1,92 @@
+import type { OccupationDefinition } from "../types";
+
+export const OCCUPATIONS: readonly OccupationDefinition[] = [
+  { id: 1, name: "Wretch", gear: "Nothing", proficiency: "Nothing" },
+  {
+    id: 2,
+    name: "Stone Cutter",
+    gear: "Mason's hammer",
+    proficiency: "Mason's tools",
+  },
+  {
+    id: 3,
+    name: "Temple Servant",
+    gear: "Stone amulet dedicated to an elemental spirit",
+    proficiency: "Religion",
+  },
+  {
+    id: 4,
+    name: "Potter",
+    gear: "Nothing",
+    proficiency: "Mending once per day",
+    special: "mending",
+  },
+  {
+    id: 5,
+    name: "Basket Weaver",
+    gear: "Nothing",
+    proficiency: "Sleight of Hand",
+  },
+  { id: 6, name: "Fisher", gear: "Nothing", proficiency: "Water vehicles" },
+  {
+    id: 7,
+    name: "Obsidian Knapper",
+    gear: "3 obsidian daggers",
+    proficiency: "Nothing",
+  },
+  { id: 8, name: "Storyteller", gear: "Nothing", proficiency: "Persuasion" },
+  {
+    id: 9,
+    name: "Slave Cook",
+    gear: "1 healing salve",
+    proficiency: "Nothing",
+  },
+  {
+    id: 10,
+    name: "Assistant Scribe",
+    gear: "Nothing",
+    proficiency: "Investigation",
+  },
+  { id: 11, name: "Grave Keeper", gear: "Nothing", proficiency: "Medicine" },
+  {
+    id: 12,
+    name: "Grave Robber",
+    gear: "1 crude lockpick",
+    proficiency: "Thieves' tools",
+  },
+  { id: 13, name: "Outcast", gear: "Nothing", proficiency: "Survival" },
+  { id: 14, name: "Caravaner", gear: "Nothing", proficiency: "Nature" },
+  {
+    id: 15,
+    name: "Gladiator's Squire",
+    gear: "Dirty bandana",
+    proficiency: "Martial weapons",
+  },
+  {
+    id: 16,
+    name: "Failed Noble",
+    gear: "Silver signet ring",
+    proficiency: "Nothing",
+  },
+  { id: 17, name: "Goatherd", gear: "Nothing", proficiency: "Animal Handling" },
+  {
+    id: 18,
+    name: "Mystic",
+    gear: "4 crumpled tarot cards",
+    proficiency: "Arcana",
+  },
+  {
+    id: 19,
+    name: "Budding Mage",
+    gear: "Nothing",
+    proficiency: "One SRD cantrip",
+    special: "cantrip",
+  },
+  {
+    id: 20,
+    name: "Rogue Talent",
+    gear: "Nothing",
+    proficiency: "One psionic power",
+    special: "power",
+  },
+];
