@@ -5,7 +5,7 @@ export const POWERS: readonly PowerDefinition[] = [
     id: "mind-lance",
     name: "Mind Lance",
     summary:
-      "Once per long rest: one creature within 30 ft. makes an Intelligence save or takes 1d6 psychic damage.",
+      "Once per long rest: one creature within 30 ft. makes an INT save or takes 1d6 psychic damage.",
   },
   {
     id: "kinetic-hand",

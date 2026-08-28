@@ -31,6 +31,22 @@ describe("funnel rules", () => {
     expect(ANCESTRIES.map((a) => a.id)).not.toContain("goliath");
     expect(OCCUPATIONS).toHaveLength(20);
     expect(TRINKETS).toHaveLength(20);
+    expect(
+      ANCESTRIES.filter((ancestry) => ancestry.category === "common"),
+    ).toHaveLength(5);
+    expect(
+      ANCESTRIES.filter((ancestry) => ancestry.category === "uncommon"),
+    ).toHaveLength(3);
+    expect(
+      ANCESTRIES.filter((ancestry) => ancestry.category === "exotic"),
+    ).toHaveLength(5);
+  });
+  it("rolls ancestries using the requested category weights", () => {
+    expect(createCharacter("batch", fixed([64, 4])).ancestryId).toBe("sun-elf");
+    expect(createCharacter("batch", fixed([65, 2])).ancestryId).toBe(
+      "wode-elf",
+    );
+    expect(createCharacter("batch", fixed([95, 4])).ancestryId).toBe("yuan-ti");
   });
   it("uses the SRD 5.2 cantrip catalog", () => {
     expect(CANTRIPS).toHaveLength(28);
@@ -65,10 +81,27 @@ describe("funnel rules", () => {
     expect(d.maxHp).toBe(0);
     expect(d.status).toBe("living");
     expect(d.gear).toContain(
-      "Improvised weapon [hit -1 | dmg 1d4-1 | thrown 20/60]",
+      "Improvised Weapon [hit -1 | dmg 1d4-1 | thrown 20/60]",
     );
     c.hpRoll = 0;
     expect(deriveCharacter(c).status).toBe("fallen");
+  });
+  it("treats a Stone Cutter's mason's hammer as a Light Hammer", () => {
+    const c = createCharacter("batch");
+    c.ancestryId = "human";
+    c.ancestryChoices = {};
+    c.occupationId = 2;
+    c.rawAbilities = { str: 14, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+    expect(deriveCharacter(c).gear).toContain(
+      "Mason's hammer (Light Hammer) [hit +2 | dmg 1d4+2 Bludgeoning | light, thrown 20/60, nick]",
+    );
+  });
+  it("gives a Slave Cook's healing salve Potion of Healing rules", () => {
+    const c = createCharacter("batch");
+    c.occupationId = 9;
+    expect(deriveCharacter(c).gear).toContain(
+      "1 healing salve (Potion of Healing). As a Bonus Action, drink it or administer it to another creature within 5 feet; the creature regains 2d4 + 2 Hit Points.",
+    );
   });
   it("retains deaths while rolling until four living characters exist", () => {
     const batch = createFunnelBatch(

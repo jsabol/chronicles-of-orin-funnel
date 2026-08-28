@@ -86,10 +86,12 @@ function PrintDialog({
   paper,
   onCancel,
   onConfirm,
+  downloading,
 }: {
   paper: PaperSize;
   onCancel: () => void;
-  onConfirm: (paper: PaperSize) => void;
+  onConfirm: (paper: PaperSize) => Promise<void>;
+  downloading: boolean;
 }) {
   const [choice, setChoice] = useState<PaperSize>(paper);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -103,7 +105,7 @@ function PrintDialog({
       className={styles.printDialog}
       onCancel={(event) => {
         event.preventDefault();
-        onCancel();
+        if (!downloading) onCancel();
       }}
     >
       <p className={styles.eyebrow}>Prepare the ledger</p>
@@ -112,6 +114,7 @@ function PrintDialog({
         <input
           type="radio"
           checked={choice === "letter"}
+          disabled={downloading}
           onChange={() => setChoice("letter")}
         />{" "}
         Letter <small className={styles.printOptionSize}>8.5 × 11 in</small>
@@ -120,20 +123,34 @@ function PrintDialog({
         <input
           type="radio"
           checked={choice === "a4"}
+          disabled={downloading}
           onChange={() => setChoice("a4")}
         />{" "}
         A4 <small className={styles.printOptionSize}>210 × 297 mm</small>
       </label>
       <div className={styles.printDialogActions}>
-        <button type="button" className={styles.secondary} onClick={onCancel}>
+        <button
+          type="button"
+          className={styles.secondary}
+          onClick={onCancel}
+          disabled={downloading}
+        >
           Cancel
         </button>
         <button
           type="button"
           className={styles.primary}
-          onClick={() => onConfirm(choice)}
+          onClick={() => void onConfirm(choice)}
+          disabled={downloading}
         >
-          Download PDF
+          {downloading ? (
+            <>
+              <span className={styles.pdfLoading} aria-hidden="true" />
+              <span>Preparing PDF…</span>
+            </>
+          ) : (
+            "Download PDF"
+          )}
         </button>
       </div>
     </dialog>
@@ -151,7 +168,8 @@ export function Roster({
     [selecting, setSelecting] = useState(false),
     [selected, setSelected] = useState<Set<string>>(new Set()),
     [deleting, setDeleting] = useState(false),
-    [printing, setPrinting] = useState(false);
+    [printing, setPrinting] = useState(false),
+    [downloading, setDownloading] = useState(false);
   const rollCount = Math.max(4 - state.characters.length, 1);
   const ordered = useMemo(
     () =>
@@ -187,13 +205,19 @@ export function Roster({
     refresh();
   };
   const print = async (paper: PaperSize) => {
-    store.setPaperSize(paper);
-    await downloadCharacterPdf(
-      state.characters.filter((c) => selected.has(c.id)),
-      paper,
-    );
-    endSelection();
-    refresh();
+    setDownloading(true);
+    try {
+      store.setPaperSize(paper);
+      await downloadCharacterPdf(
+        state.characters.filter((c) => selected.has(c.id)),
+        paper,
+      );
+      endSelection();
+      setPrinting(false);
+      refresh();
+    } finally {
+      setDownloading(false);
+    }
   };
   return (
     <>
@@ -350,6 +374,7 @@ export function Roster({
           paper={state.paperSize}
           onCancel={() => setPrinting(false)}
           onConfirm={print}
+          downloading={downloading}
         />
       )}
     </>

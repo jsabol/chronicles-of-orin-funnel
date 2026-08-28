@@ -47,6 +47,17 @@ const sortedOccupations = [...OCCUPATIONS].sort((a, b) =>
 const sortedAncestries = [...ANCESTRIES].sort((a, b) =>
   a.name.localeCompare(b.name),
 );
+const ancestryGroups = [
+  { label: "Common ancestries", category: "common" },
+  { label: "Uncommon ancestries", category: "uncommon" },
+  { label: "Exotic ancestries", category: "exotic" },
+] as const;
+const groupedAncestries = ancestryGroups.map(({ label, category }) => ({
+  label,
+  options: sortedAncestries.filter(
+    (ancestry) => ancestry.category === category
+  ),
+}));
 const skillAbilities: Record<string, Ability> = {
   Acrobatics: "dex",
   "Animal Handling": "wis",
@@ -141,7 +152,7 @@ function DeleteDialog({
       <h2>Delete {name}?</h2>
       <p>
         You can mark them <strong>Fallen</strong> under{" "}
-        <strong>Life & Choices</strong>
+        <strong className={styles.lifeChoices}>Life & Choices</strong>
         &nbsp;instead.
       </p>
       <div>
@@ -171,7 +182,7 @@ export function Editor({
 }) {
   const original = state.characters.find((c) => c.id === id);
   const [draft, setDraft] = useState<CharacterRecordV1 | null>(
-    original ? structuredClone(original) : null,
+    original ? structuredClone(original) : null
   );
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   useEffect(() => setDraft(original ? structuredClone(original) : null), [id]);
@@ -199,9 +210,12 @@ export function Editor({
         key="boost"
         label="Ability increase"
         value={choices.abilityBoost}
-        options={ABILITIES}
+        options={ABILITIES.map((ability) => ({
+          id: ability,
+          name: ability.toUpperCase(),
+        }))}
         onChange={(v) => setChoice("abilityBoost", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "human")
     dependent.push(
@@ -232,7 +246,7 @@ export function Editor({
             ];
           })
         }
-      />,
+      />
     );
   if (["deep-dwarf", "sand-dwarf"].includes(draft.ancestryId))
     dependent.push(
@@ -242,7 +256,7 @@ export function Editor({
         value={choices.tool}
         options={TOOLS}
         onChange={(v) => setChoice("tool", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "smallfolk")
     dependent.push(
@@ -252,7 +266,7 @@ export function Editor({
         value={choices.focus}
         options={FOCUSES}
         onChange={(v) => setChoice("focus", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "sun-elf")
     dependent.push(
@@ -269,7 +283,7 @@ export function Editor({
         value={choices.weapon}
         options={WEAPONS}
         onChange={(v) => setChoice("weapon", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "beastkin")
     dependent.push(
@@ -279,7 +293,7 @@ export function Editor({
         value={choices.adaptation}
         options={BEASTKIN_ADAPTATIONS}
         onChange={(v) => setChoice("adaptation", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "dragonkin")
     dependent.push(
@@ -306,7 +320,7 @@ export function Editor({
             c.ancestryChoices.traits = v;
           })
         }
-      />,
+      />
     );
   if (draft.ancestryId === "shifter")
     dependent.push(
@@ -316,7 +330,7 @@ export function Editor({
         value={choices.shift}
         options={SHIFTER_FORMS}
         onChange={(v) => setChoice("shift", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "warforged")
     dependent.push(
@@ -340,7 +354,7 @@ export function Editor({
         value={choices.scar}
         options={WARFORGED_SCARS}
         onChange={(v) => setChoice("scar", v)}
-      />,
+      />
     );
   if (draft.ancestryId === "tiefling")
     dependent.push(
@@ -353,7 +367,7 @@ export function Editor({
             c.ancestryChoices.traits = v;
           })
         }
-      />,
+      />
     );
   if (draft.ancestryId === "wode-elf")
     dependent.push(
@@ -363,7 +377,7 @@ export function Editor({
         value={choices.weapon}
         options={WEAPONS}
         onChange={(v) => setChoice("weapon", v)}
-      />,
+      />
     );
   if (d.occupation.special === "cantrip")
     dependent.push(
@@ -377,7 +391,7 @@ export function Editor({
             c.occupationChoices.cantrip = v;
           })
         }
-      />,
+      />
     );
   if (d.occupation.special === "power")
     dependent.push(
@@ -391,7 +405,7 @@ export function Editor({
             c.occupationChoices.power = v;
           })
         }
-      />,
+      />
     );
   return (
     <>
@@ -482,6 +496,7 @@ export function Editor({
                   label="Ancestry"
                   value={draft.ancestryId}
                   options={sortedAncestries}
+                  groups={groupedAncestries}
                   onChange={(v) =>
                     save((c) => {
                       c.ancestryId = v;
@@ -497,7 +512,7 @@ export function Editor({
                     save((c) => {
                       c.occupationId = Number(v);
                       c.occupationChoices = generateOccupationChoices(
-                        Number(v),
+                        Number(v)
                       );
                     })
                   }
@@ -589,6 +604,46 @@ export function Editor({
     </>
   );
 }
+function GearItem({ item }: { item: string }) {
+  const weapon = item.match(
+    /^(.*?) \[hit ([^|]+) \| dmg ([^|]+)(?: \| (.+))?\]$/
+  );
+  if (!weapon) return <li>{item}</li>;
+
+  const [, name, attack, damage, properties] = weapon;
+  const formattedDamage = damage.replace(/([+-])(\d+)/, " $1 $2");
+  return (
+    <li>
+      <strong>{name}.</strong> <em>Attack:</em> {attack}
+      {properties && `, ${properties}`}. <em>Dmg:</em> {formattedDamage}
+    </li>
+  );
+}
+
+function MagicItem({ item }: { item: string }) {
+  const spell = item.match(
+    /^(.+?)\. Casting Time: (.+?)\. Range: (.+?)\. Duration: (.+?)\. (.+)$/
+  );
+  if (spell) {
+    const [, name, castingTime, range, duration, description] = spell;
+    return (
+      <li>
+        <em>{name}.</em> <em>Casting Time:</em> {castingTime}. <em>Range:</em>{" "}
+        {range}. <em>Duration:</em> {duration}. {description}
+      </li>
+    );
+  }
+
+  const power = item.match(/^(.+?) - (.+)$/);
+  return power ? (
+    <li>
+      <em>{power[1]}.</em> {power[2]}
+    </li>
+  ) : (
+    <li>{item}</li>
+  );
+}
+
 function Derived({ record }: { record: CharacterRecordV1 }) {
   const d = deriveCharacter(record);
   const visibleTraits = d.traits.filter((t) => !foldedTraits.has(t.id));
@@ -605,7 +660,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
       summary: record.ancestryChoices.runeTarget,
     });
   const nonSkills = d.proficiencies.filter(
-    (item) => !SKILLS.includes(item as (typeof SKILLS)[number]),
+    (item) => !SKILLS.includes(item as (typeof SKILLS)[number])
   );
   return (
     <aside className={`${styles.derived} ${styles.panel} ${styles[d.status]}`}>
@@ -640,9 +695,15 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
         <dd>{d.languages.join(", ")}</dd>
         <dt>Proficiencies</dt>
         <dd>{nonSkills.join(", ") || "None"}</dd>
-        <dt>Gear</dt>
-        <dd>{d.gear.join(", ") || "None"}</dd>
       </dl>
+      <section className={styles.recordGear}>
+        <h2>Gear</h2>
+        <ul>
+          {d.gear.map((item) => (
+            <GearItem key={item} item={item} />
+          ))}
+        </ul>
+      </section>
       {visibleTraits.length > 0 && (
         <section className={styles.ancestryFeatures}>
           <h2>Ancestry Features</h2>
@@ -661,7 +722,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
           <h2>Magic & Powers</h2>
           <ul>
             {d.magic.map((item) => (
-              <li key={item}>{item}</li>
+              <MagicItem key={item} item={item} />
             ))}
           </ul>
         </section>

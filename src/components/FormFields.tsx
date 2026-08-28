@@ -9,6 +9,10 @@ type Option = {
   text?: string;
   points?: number;
 };
+type OptionGroup = {
+  label: string;
+  options: readonly (string | Option)[];
+};
 const labelOf = (item: string | Option) =>
   typeof item === "string"
     ? item.replace(/-/g, " ").replace(/(^|\s)\w/g, (c) => c.toUpperCase())
@@ -17,12 +21,14 @@ export function SelectField({
   label,
   value,
   options,
+  groups,
   onChange,
   disabled = false,
 }: {
   label: string;
   value?: string | number;
   options: readonly (string | Option)[];
+  groups?: readonly OptionGroup[];
   onChange: (value: string) => void;
   disabled?: boolean;
 }) {
@@ -65,6 +71,15 @@ export function SelectField({
     else choices.current?.enable();
   }, [disabled]);
 
+  const renderOption = (item: string | Option) => {
+    const id = typeof item === "string" ? item : item.id;
+    return (
+      <option key={String(id)} value={id}>
+        {labelOf(item)}
+      </option>
+    );
+  };
+
   return (
     <div className={styles.field}>
       <label htmlFor={fieldId}>{label}</label>
@@ -76,14 +91,13 @@ export function SelectField({
           defaultValue={value ?? ""}
           disabled={disabled}
         >
-          {options.map((item) => {
-            const id = typeof item === "string" ? item : item.id;
-            return (
-              <option key={String(id)} value={id}>
-                {labelOf(item)}
-              </option>
-            );
-          })}
+          {groups
+            ? groups.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.options.map(renderOption)}
+                </optgroup>
+              ))
+            : options.map(renderOption)}
         </select>
       </div>
     </div>

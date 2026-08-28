@@ -469,3 +469,21 @@
   gap: 12px;
   margin-top: 20px;
 }
+
+.pdfLoading {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.45em;
+  vertical-align: -0.08em;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: pdf-loading-spin 0.7s linear infinite;
+}
+
+@keyframes pdf-loading-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}

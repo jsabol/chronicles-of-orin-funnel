@@ -14,6 +14,16 @@ const plainText = (value) =>
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/\*\*|_/g, "")
     .replace(/\s+/g, " ")
+    .replace(/\bAdvantage\b/g, "Adv")
+    .replace(/\bDisadvantage\b/g, "Disadv")
+    .replace(/\badvantage\b/g, "adv")
+    .replace(/\bdisadvantage\b/g, "disadv")
+    .replace(/\bStrength\b/g, "STR")
+    .replace(/\bDexterity\b/g, "DEX")
+    .replace(/\bConstitution\b/g, "CON")
+    .replace(/\bIntelligence\b/g, "INT")
+    .replace(/\bWisdom\b/g, "WIS")
+    .replace(/\bCharisma\b/g, "CHA")
     .trim();
 
 const cantrips = sections.flatMap((section) => {
@@ -59,6 +69,12 @@ cantrips.push({
 });
 
 const serialized = (value) => JSON.stringify(value, null, 2);
+const descriptionOverrides = new Map([
+  [
+    "Elementalism",
+    "Create 1 of the following. Beckon Air. A breeze ripples cloth, stirs dust, rustles leaves, and closes open doors and shutters in a 5-foot Cube unless they are held open. Beckon Earth. Coat surfaces in a 5-foot-square area with a thin layer of dust or sand, or make one word appear in your handwriting in dirt or sand. Beckon Fire. Fill a 5-foot Cube with harmless embers and colored, scented smoke. Choose the color and scent. The embers can light candles, torches, or lamps there. The smoke's scent lasts 1 minute. Beckon Water. Cool mist lightly dampens creatures and objects in a 5-foot Cube, or create 1 cup of clean water in an open container or on a surface; the water evaporates in 1 minute. Sculpt Element. Shape dirt, sand, fire, smoke, mist, or water that fits in a 1-foot Cube into a crude form, such as a creature, for 1 hour.",
+  ],
+]);
 const wizardCantrips = cantrips
   .filter((spell) => spell.classes.includes("Wizard"))
   .map((spell) => spell.name);
@@ -73,7 +89,10 @@ export interface SrdCantrip {
 }
 
 export const SRD_CANTRIPS: readonly SrdCantrip[] = ${serialized(
-  cantrips.map(({ classes: _classes, ...spell }) => spell),
+  cantrips.map(({ classes: _classes, ...spell }) => ({
+    ...spell,
+    description: descriptionOverrides.get(spell.name) ?? spell.description,
+  })),
 )};
 
 export const CANTRIPS = SRD_CANTRIPS.map((spell) => spell.name);

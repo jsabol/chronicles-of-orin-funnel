@@ -1,8 +1,13 @@
 import { PDFDocument } from "pdf-lib";
 import { readFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { createCharacter } from "./domain";
-import { generatePdfBytes, PDF_PAGE_SIZES } from "./pdf";
+import { createCharacter } from "../domain";
+import {
+  formatGearForPdf,
+  formatMagicForPdf,
+  generatePdfBytes,
+  PDF_PAGE_SIZES,
+} from "./pdf";
 
 beforeAll(async () => {
   const agencyFont = await readFile("public/AgencyFB Black Regular.otf");
@@ -15,6 +20,16 @@ beforeAll(async () => {
 afterAll(() => vi.unstubAllGlobals());
 
 describe("print output", () => {
+  it("formats weapon gear like the character record", () => {
+    expect(
+      formatGearForPdf("Improvised Weapon [hit +5 | dmg 1d4+3 | thrown 20/60]"),
+    ).toBe("Improvised Weapon. Attack: +5, thrown 20/60. Dmg: 1d4 + 3");
+  });
+  it("formats powers like the character record", () => {
+    expect(formatMagicForPdf("Mind Lance - Strike with psychic force.")).toBe(
+      "Mind Lance. Strike with psychic force.",
+    );
+  });
   it.each(["letter", "a4"] as const)(
     "creates two-up %s pages",
     async (paper) => {

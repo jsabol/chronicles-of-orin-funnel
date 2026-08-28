@@ -57,6 +57,15 @@ export const pick = <T>(items: readonly T[], random: RandomSource): T => {
   return items[random.int(items.length)];
 };
 
+const pickWeightedAncestry = (random: RandomSource) => {
+  const roll = random.int(100);
+  const category = roll < 65 ? "common" : roll < 95 ? "uncommon" : "exotic";
+  return pick(
+    ANCESTRIES.filter((ancestry) => ancestry.category === category),
+    random,
+  );
+};
+
 const uniquePicks = <T>(
   items: readonly T[],
   count: number,
@@ -75,9 +84,21 @@ const weaponGear = (
   modifiers: AbilityScores,
   proficiencies: string[],
 ): string => {
-  if (entry === "Improvised weapon") {
+  if (entry === "Improvised Weapon") {
     const ability = modifiers.str;
     return `${entry} [hit ${formatModifier(ability)} | dmg 1d4${formatModifier(ability)} | thrown 20/60]`;
+  }
+  if (entry === "Mason's hammer") {
+    const ability = modifiers.str;
+    const proficient =
+      proficiencies.includes("Light hammer") ||
+      proficiencies.includes("Simple weapons") ||
+      proficiencies.includes("Martial weapons");
+    const hit = ability + (proficient ? 2 : 0);
+    return `${entry} (Light Hammer) [hit ${formatModifier(hit)} | dmg 1d4${formatModifier(ability)} Bludgeoning | light, thrown 20/60, nick]`;
+  }
+  if (entry === "1 healing salve") {
+    return "1 healing salve (Potion of Healing). As a Bonus Action, drink it or administer it to another creature within 5 feet; the creature regains 2d4 + 2 Hit Points.";
   }
   const daggerMatch = entry.match(/^(\d+ )?(?:obsidian )?daggers?$/i);
   if (!daggerMatch) return entry;
@@ -341,7 +362,7 @@ export const deriveCharacter = (
   const magic: string[] = [];
   const gear = [
     ...(occupation.gear !== "Nothing" ? [occupation.gear] : []),
-    "Improvised weapon",
+    "Improvised Weapon",
   ];
 
   if (!occupation.special && occupation.proficiency !== "Nothing")
@@ -440,6 +461,24 @@ export const deriveCharacter = (
   }
 
   const maxHp = record.hpRoll + modifiers.con;
+  const uniqueProficiencies = [...new Set(proficiencies)];
+  const savingThrows = Object.fromEntries(
+    ABILITIES.map((ability) => {
+      const proficient = uniqueProficiencies.some(
+        (proficiency) =>
+          proficiency.toLowerCase() === `${ability} save` ||
+          proficiency.toLowerCase() === `${ability} saves` ||
+          proficiency.toLowerCase() === `${ability} saving throw`,
+      );
+      return [
+        ability,
+        {
+          bonus: modifiers[ability] + (proficient ? 2 : 0),
+          proficient,
+        },
+      ];
+    }),
+  ) as DerivedCharacter["savingThrows"];
   return {
     record,
     ancestry,
@@ -447,6 +486,7 @@ export const deriveCharacter = (
     trinket,
     finalAbilities,
     modifiers,
+    savingThrows,
     proficiencyBonus: 2,
     armorClass,
     maxHp,
@@ -455,7 +495,7 @@ export const deriveCharacter = (
     speed,
     size: ancestry.size,
     languages: [...new Set(languages)],
-    proficiencies: [...new Set(proficiencies)],
+    proficiencies: uniqueProficiencies,
     gear: gear.map((item) => weaponGear(item, modifiers, proficiencies)),
     traits,
     magic,
@@ -467,7 +507,7 @@ export const createCharacter = (
   random: RandomSource = cryptoRandom,
   now = new Date(),
 ): CharacterRecordV1 => {
-  const ancestry = pick(ANCESTRIES, random);
+  const ancestry = pickWeightedAncestry(random);
   const occupation = pick(OCCUPATIONS, random);
   const timestamp = now.toISOString();
   return {

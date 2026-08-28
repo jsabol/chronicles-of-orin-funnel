@@ -40,7 +40,6 @@
 
 .back {
   color: v.$gold-text;
-  font-weight: 700;
 }
 
 .characterName {
@@ -163,6 +162,10 @@
   border: 0;
 }
 
+.lifeChoices {
+  white-space: nowrap;
+}
+
 .hpRoll {
   flex: 0 0 auto;
   font: 700 18px v.$font-sans;
@@ -274,12 +277,11 @@
   }
 
   dt {
-    font-weight: 800;
     text-transform: uppercase;
   }
 
   dd {
-    margin: 4px 0 0 0;
+    margin: 3px 0 0 0;
     font-family: v.$font-serif;
     font-size: 16px;
   }
@@ -332,6 +334,7 @@
 
 .calculatedSkills,
 .ancestryFeatures,
+.recordGear,
 .recordMagic {
   margin: 22px 0;
 
@@ -387,6 +390,42 @@
   }
 }
 
+.recordGear {
+  ul {
+    gap: 0;
+  }
+
+  li {
+    padding: 3px 0;
+    border-bottom: 1px dotted #9d8969;
+    color: v.$gold-text;
+    font: 500 14px/1.35 v.$font-serif;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: 500;
+  }
+}
+
+.recordMagic {
+  ul {
+    gap: 0;
+  }
+
+  li {
+    padding: 3px 0;
+    border-bottom: 1px dotted #9d8969;
+    color: v.$gold-text;
+    font: 500 14px/1.35 v.$font-serif;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: 500;
+  }
+}
+
 .ancestryFeatures {
   li {
     padding-bottom: 7px;
@@ -403,17 +442,6 @@
   span {
     color: v.$gold-text;
     font: 500 16px/1.35 v.$font-serif;
-  }
-}
-
-.recordMagic li {
-  color: v.$gold-text;
-  font: 500 14px/1.35 v.$font-serif;
-
-  &::before {
-    content: "◆";
-    margin-right: 7px;
-    font-size: 9px;
   }
 }
 

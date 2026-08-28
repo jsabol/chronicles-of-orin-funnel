@@ -2,6 +2,11 @@ export const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"] as const;
 
 export type Ability = (typeof ABILITIES)[number];
 export type AbilityScores = Record<Ability, number>;
+export interface SavingThrow {
+  bonus: number;
+  proficient: boolean;
+}
+export type SavingThrows = Record<Ability, SavingThrow>;
 export type CharacterStatus = "living" | "fallen";
 export type PaperSize = "letter" | "a4";
 
@@ -109,6 +114,7 @@ export interface DerivedCharacter {
   trinket: TrinketDefinition;
   finalAbilities: AbilityScores;
   modifiers: AbilityScores;
+  savingThrows: SavingThrows;
   proficiencyBonus: number;
   armorClass: number;
   maxHp: number;

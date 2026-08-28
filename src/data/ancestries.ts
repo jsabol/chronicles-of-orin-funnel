@@ -12,15 +12,11 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 25,
     languages: ["Common", "Undercommon"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait(
         "resilience",
         "Dwarven Resilience",
-        "Advantage on saves against poison and resistance to poison damage.",
+        "Adv on saves against poison and resistance to poison damage.",
       ),
       trait(
         "tool",
@@ -30,7 +26,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
       trait(
         "knowledge",
         "Well of Knowledge",
-        "For Intelligence checks about your Focus, gain proficiency and double proficiency bonus.",
+        "For INT checks about your Focus, gain proficiency and double proficiency bonus.",
       ),
       trait(
         "rune",
@@ -100,11 +96,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
         "Lucky",
         "Reroll a 1 on an attack, check, or save; use the new roll.",
       ),
-      trait(
-        "fearless",
-        "Fearless",
-        "Advantage on saves against being frightened.",
-      ),
+      trait("fearless", "Fearless", "Adv on saves against being frightened."),
       trait(
         "nimble",
         "Nimble",
@@ -131,7 +123,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
       trait(
         "fey",
         "Fey Ancestry",
-        "Advantage against charm; magic cannot put you to sleep.",
+        "Adv against charm; magic cannot put you to sleep.",
       ),
       trait(
         "wild",
@@ -143,7 +135,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
       trait(
         "athlete",
         "Effortless Athlete",
-        "Ignore loose-sand difficult terrain and gain advantage against Exhaustion.",
+        "Ignore loose-sand difficult terrain and gain adv against Exhaustion.",
       ),
     ],
     nameProfile: NAME_PROFILES["sun-elf"],
@@ -157,11 +149,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 30,
     languages: ["Common", "Dukhet"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait("instinct", "Wasteland Instinct", "Gain Survival proficiency."),
     ],
     nameProfile: NAME_PROFILES["beastkin"],
@@ -186,15 +174,11 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 30,
     languages: ["Common", "Dukhet"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait(
         "shifting",
         "Shifting",
-        "Once per short or long rest, shift for 1 minute and gain temporary HP equal to level + Constitution modifier, minimum 1.",
+        "Once per short or long rest, shift for 1 minute and gain temporary HP equal to level + CON modifier, minimum 1.",
       ),
     ],
     nameProfile: NAME_PROFILES["shifter"],
@@ -211,7 +195,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
       trait(
         "resilience",
         "Constructed Resilience",
-        "Resist poison, gain advantage against poison, ignore disease, food, drink, air, and magical sleep.",
+        "Resist poison, gain adv against poison, ignore disease, food, drink, air, and magical sleep.",
       ),
       trait(
         "rest",
@@ -240,15 +224,11 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 30,
     languages: ["Common", "Primeld"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait(
         "heritage",
         "Serpentine Heritage",
-        "Advantage against spells and poison, poison resistance, and ignore loose-sand difficult terrain.",
+        "Adv against spells and poison, poison resistance, and ignore loose-sand difficult terrain.",
       ),
       trait(
         "echoes",
@@ -272,11 +252,7 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 30,
     languages: ["Common", "Dukhet"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait("menacing", "Menacing", "Gain Intimidation proficiency."),
       trait(
         "rush",
@@ -317,16 +293,12 @@ export const ANCESTRIES: readonly AncestryDefinition[] = [
     speed: 30,
     languages: ["Common", "Fairspeak"],
     traits: [
-      trait(
-        "darkvision",
-        "Darkvision",
-        "See in darkness to 60 ft. as dim light.",
-      ),
+      trait("darkvision", "Darkvision", "60 ft."),
       trait("keen", "Keen Senses", "Gain Perception proficiency."),
       trait(
         "fey",
         "Fey Ancestry",
-        "Advantage against charm; magic cannot put you to sleep.",
+        "Adv against charm; magic cannot put you to sleep.",
       ),
       trait("trance", "Trance", "Four hours of meditation grants a full rest."),
       trait(

@@ -12,7 +12,7 @@ export const BEASTKIN_ADAPTATIONS = [
   trait(
     "keen-scent",
     "Keen Scent",
-    "Advantage on Perception and Survival checks that rely on smell.",
+    "Adv on Perception and Survival checks that rely on smell.",
   ),
   trait(
     "fleet-stride",
@@ -31,7 +31,7 @@ export const SHIFTER_FORMS = [
   trait(
     "longtooth",
     "Longtooth",
-    "While shifted, make a 1d6 + Strength piercing bite as a bonus action.",
+    "While shifted, make a 1d6 + STR piercing bite as a bonus action.",
   ),
   trait(
     "swiftstride",
@@ -41,7 +41,7 @@ export const SHIFTER_FORMS = [
   trait(
     "wildhunt",
     "Wildhunt",
-    "While shifted, gain advantage on Wisdom checks and nearby foes cannot attack you with advantage.",
+    "While shifted, gain adv on WIS checks and nearby foes cannot attack you with adv.",
   ),
 ] as const;
 
@@ -49,7 +49,7 @@ export const WARFORGED_SCARS = [
   trait(
     "legs",
     "Scar: Legs",
-    "Speed is 20 ft.; after standing still for 1 minute, gain advantage on Perception until you move.",
+    "Speed is 20 ft.; after standing still for 1 minute, gain adv on Perception until you move.",
   ),
   trait(
     "arms",
@@ -69,12 +69,12 @@ export const WARFORGED_SCARS = [
   trait(
     "truth",
     "Scar: Truth",
-    "Cannot lie; gain advantage on Insight checks to detect lies.",
+    "Cannot lie; gain adv on Insight checks to detect lies.",
   ),
   trait(
     "behaviour",
     "Scar: Behaviour",
-    "Disadvantage on Charisma checks against non-constructs; advantage on saves against charm and fear.",
+    "Disadv on CHA checks against non-constructs; adv on saves against charm and fear.",
   ),
 ] as const;
 
@@ -94,7 +94,7 @@ export const DRAGON_TRAITS = [
   trait(
     "oath",
     "Remember Your Oath",
-    "Bonus action: gain advantage on saving throws until your next turn.",
+    "Bonus action: gain adv on saving throws until your next turn.",
     1,
   ),
   trait(
@@ -106,7 +106,7 @@ export const DRAGON_TRAITS = [
   trait(
     "roar",
     "Dragon Roar",
-    "Once per short or long rest, replace an attack with a roar; nearby enemies make a Wisdom save or become frightened.",
+    "Once per short or long rest, replace an attack with a roar; nearby enemies make a WIS save or become frightened.",
     2,
   ),
 ] as const;
@@ -139,14 +139,14 @@ export const TIEFLING_TRAITS = [
   trait(
     "horns",
     "Impressive Horns",
-    "Advantage on saving throws against charm and fear.",
+    "Adv on saving throws against charm and fear.",
     2,
   ),
   trait("prehensile-tail", "Prehensile Tail", "You cannot be flanked.", 2),
   trait(
     "wings",
     "Wings",
-    "Fly speed 30 ft. for Strength modifier rounds (minimum 1); at levels 1-3, vulnerable to all damage while flying.",
+    "Fly speed 30 ft. for STR modifier rounds (minimum 1); at levels 1-3, vulnerable to all damage while flying.",
     2,
   ),
 ] as const;
