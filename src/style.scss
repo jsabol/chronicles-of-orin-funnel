@@ -500,7 +500,7 @@ button,
 }
 .big-vitals span {
   flex: 1;
-  background: $ink;
+  background: rgba(10, 9, 8, 0.94);
   color: $light;
   text-align: center;
   padding: 14px;
@@ -1211,9 +1211,11 @@ footer {
 #character-form .derived {
   background-image: none;
 }
-#character-form .panel p,
-#character-form .derived dd {
+#character-form .panel p {
   color: #2d241c;
+}
+#character-form .derived dd {
+  color: #d7bd94;
 }
 #character-form input,
 #character-form select {
@@ -1481,11 +1483,40 @@ footer {
   font:
     500 14px/1.35 Newsreader,
     serif;
-  color: #2d241c;
+  color: #d7bd94;
 }
 .record-magic li:before {
   content: "◆";
   color: #7b2114;
   margin-right: 7px;
   font-size: 9px;
+}
+/* Inverted character-sheet summary surfaces. */
+.editor-head {
+  background: rgba(10, 9, 8, 0.94);
+  border-bottom-color: #6d5035;
+  color: #d7bd94;
+}
+.editor-head .back,
+.editor-head .eyebrow,
+.editor-head .status-line {
+  color: #d7bd94;
+}
+
+#character-form .derived {
+  background: rgba(7, 8, 7, 0.92) url("/assets/iron.webp") center/680px;
+  border-color: #6d5035;
+  color: #d7bd94;
+}
+#character-form .derived * {
+  color: #d7bd94;
+}
+#character-form .derived .stats {
+  border-color: #6d5035;
+}
+#character-form .derived h2 {
+  border-bottom-color: #d7bd94;
+}
+#character-form .derived .eyebrow {
+  color: #d7bd94;
 }
