@@ -13,6 +13,7 @@ export interface CharacterStore {
   addCharacters(characters: CharacterRecordV1[]): void;
   updateCharacter(character: CharacterRecordV1): void;
   deleteCharacter(id: string): void;
+  deleteCharacters(ids: readonly string[]): void;
   setPaperSize(paperSize: PaperSize): void;
 }
 
@@ -109,6 +110,14 @@ export const createCharacterStore = (storage?: StorageLike): CharacterStore => {
       state = {
         ...state,
         characters: state.characters.filter((item) => item.id !== id),
+      };
+      persist();
+    },
+    deleteCharacters(ids) {
+      const idsToDelete = new Set(ids);
+      state = {
+        ...state,
+        characters: state.characters.filter((item) => !idsToDelete.has(item.id)),
       };
       persist();
     },

@@ -135,10 +135,9 @@ export function Roster({
   const [filter, setFilter] = useState<Filter>("all"),
     [selecting, setSelecting] = useState(false),
     [selected, setSelected] = useState<Set<string>>(new Set()),
+    [deleting, setDeleting] = useState(false),
     [printing, setPrinting] = useState(false);
-  const living = state.characters.filter(
-    (c) => deriveCharacter(c).status === "living",
-  ).length;
+  const rollCount = Math.max(4 - state.characters.length, 1);
   const ordered = useMemo(
     () =>
       [...state.characters].sort((a, b) =>
@@ -150,11 +149,8 @@ export function Roster({
     (c) => filter === "all" || deriveCharacter(c).status === filter,
   );
   const roll = () => {
-    const needed = 4 - living;
-    if (needed > 0) {
-      store.addCharacters(createFunnelBatch(cryptoRandom, needed));
-      refresh();
-    }
+    store.addCharacters(createFunnelBatch(cryptoRandom, rollCount));
+    refresh();
   };
   const toggle = (id: string) =>
     setSelected((previous) => {
@@ -165,6 +161,15 @@ export function Roster({
   const endSelection = () => {
     setSelecting(false);
     setSelected(new Set());
+  };
+  const endDeletion = () => {
+    setDeleting(false);
+    setSelected(new Set());
+  };
+  const confirmDeletion = () => {
+    store.deleteCharacters([...selected]);
+    endDeletion();
+    refresh();
   };
   const print = async (paper: PaperSize) => {
     store.setPaperSize(paper);
@@ -189,9 +194,11 @@ export function Roster({
         </div>
       </section>
       <section className="funnel-actions">
-        <button className="primary roll" onClick={roll} disabled={living >= 4}>
+        <button className="primary roll" onClick={roll}>
           <img src={asset("dice.webp")} alt="" />
-          <span>Roll Four Wretches</span>
+          <span>
+            Roll {rollCount === 1 ? "One Wretch" : `${rollCount} Wretches`}
+          </span>
         </button>
         <button
           className="secondary funnel"
@@ -248,7 +255,7 @@ export function Roster({
             <CharacterCard
               key={c.id}
               character={c}
-              selecting={selecting}
+              selecting={selecting || deleting}
               selected={selected.has(c.id)}
               onToggle={() => toggle(c.id)}
               onOpen={() => {
@@ -271,6 +278,22 @@ export function Roster({
               </h2>
             </section>
           )
+        )}
+        {state.characters.length > 0 && !selecting && (
+          <div className="deletion-actions">
+            <button
+              className="danger"
+              disabled={deleting && selected.size === 0}
+              onClick={() => (deleting ? confirmDeletion() : setDeleting(true))}
+            >
+              {deleting ? `Confirm delete ${selected.size}` : "Mass deletion"}
+            </button>
+            {deleting && (
+              <button className="secondary" onClick={endDeletion}>
+                Cancel deletion
+              </button>
+            )}
+          </div>
         )}
       </section>
       {printing && (

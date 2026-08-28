@@ -334,6 +334,20 @@ button,
 .selection-bar .primary {
   margin-left: auto;
 }
+.deletion-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}.deletion-actions .secondary {
+  background: #181611 url("/assets/iron.webp") center/520px;
+  border-color: #a88159;
+  color: #e6c49a;
+}
+.deletion-actions .secondary:hover {
+  background-color: #2b251c;
+  border-color: #d0a16d;
+}
 .text-button {
   background: none;
   border: 0;
