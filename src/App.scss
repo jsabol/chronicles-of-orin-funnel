@@ -10,27 +10,25 @@
   font-display: swap;
 }
 
-:global {
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  html {
-    background: v.$ink;
-    color: v.$ink;
-    font-family: v.$font-sans;
-    font-size: 18px;
-  }
+html {
+  background: v.$ink;
+  color: v.$ink;
+  font-family: v.$font-sans;
+  font-size: 18px;
+}
 
-  body {
-    min-width: 320px;
-    margin: 0;
-    color: #d9c5a0;
-    background: v.$iron v.$iron-texture center/700px fixed;
-  }
+body {
+  min-width: 320px;
+  margin: 0;
+  color: #d9c5a0;
+  background: v.$iron v.$iron-texture center/700px fixed;
+}
 
-  :focus-visible {
-    outline: 4px solid #e7c864;
-    outline-offset: 3px;
-  }
+:focus-visible {
+  outline: 4px solid #e7c864;
+  outline-offset: 3px;
 }
