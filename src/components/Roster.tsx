@@ -42,20 +42,29 @@ function CharacterCard({
         </label>
       )}
       <div className={styles.fateCopy}>
-        <h3>{character.name}</h3>
-        <p>
-          {derived.ancestry.name} <i>◆</i> {derived.occupation.name}
+        <h3
+          className={`${styles.fateTitle} ${derived.status === "fallen" ? styles.fallenFateTitle : ""}`}
+        >
+          {character.name}
+        </h3>
+        <p className={styles.fateDescription}>
+          {derived.ancestry.name}{" "}
+          <i className={styles.fateDescriptionSeparator}>◆</i>{" "}
+          {derived.occupation.name}
         </p>
         {derived.status === "fallen" && character.causeOfDeath && (
           <p className={styles.deathCause}>{character.causeOfDeath}</p>
         )}
         <div className={styles.fateVitals}>
           <span className={styles.hp}>{derived.maxHp} HP</span>
-          <span className={styles.def}>{derived.armorClass} DEF</span>
+          <span className={`${styles.def} ${styles.fateVitalSecondary}`}>
+            {derived.armorClass} DEF
+          </span>
         </div>
       </div>
       <div className={styles.fateSeal}>
         <img
+          className={styles.fateSealImage}
           src={asset(
             derived.status === "living"
               ? "living-sun.webp"
@@ -63,7 +72,11 @@ function CharacterCard({
           )}
           alt=""
         />
-        <strong>{derived.status === "living" ? "Living" : "Fallen"}</strong>
+        <strong
+          className={`${styles.fateSealLabel} ${derived.status === "fallen" ? styles.fallenFateSealLabel : ""}`}
+        >
+          {derived.status === "living" ? "Living" : "Fallen"}
+        </strong>
       </div>
     </article>
   );
@@ -94,24 +107,24 @@ function PrintDialog({
       }}
     >
       <p className={styles.eyebrow}>Prepare the ledger</p>
-      <h2>Choose paper size</h2>
-      <label>
+      <h2 className={styles.printDialogTitle}>Choose paper size</h2>
+      <label className={styles.printOption}>
         <input
           type="radio"
           checked={choice === "letter"}
           onChange={() => setChoice("letter")}
         />{" "}
-        Letter <small>8.5 × 11 in</small>
+        Letter <small className={styles.printOptionSize}>8.5 × 11 in</small>
       </label>
-      <label>
+      <label className={styles.printOption}>
         <input
           type="radio"
           checked={choice === "a4"}
           onChange={() => setChoice("a4")}
         />{" "}
-        A4 <small>210 × 297 mm</small>
+        A4 <small className={styles.printOptionSize}>210 × 297 mm</small>
       </label>
-      <div>
+      <div className={styles.printDialogActions}>
         <button type="button" className={styles.secondary} onClick={onCancel}>
           Cancel
         </button>
@@ -186,17 +199,24 @@ export function Roster({
     <>
       <section className={styles.doomHero}>
         <div className={styles.doomCopy}>
-          <p className={styles.eyebrow}>Level-zero company</p>
-          <h1>The Doomed</h1>
-          <p>
-            <b>{state.characters.length}</b>{" "}
+          <p className={`${styles.eyebrow} ${styles.doomCopyEyebrow}`}>
+            Level-zero company
+          </p>
+          <h1 className={styles.doomCopyTitle}>The Doomed</h1>
+          <p className={styles.doomCopyCount}>
+            <b className={styles.doomCopyCountNumber}>
+              {state.characters.length}
+            </b>{" "}
             {state.characters.length === 1 ? "character" : "characters"}
           </p>
           <span className={styles.doomRule}>◇—☠—◇</span>
         </div>
       </section>
       <section className={styles.funnelActions}>
-        <button className={styles.primary} onClick={roll}>
+        <button
+          className={`${styles.primary} ${styles.funnelAction} ${styles.funnelPrimaryAction}`}
+          onClick={roll}
+        >
           <span
             className={`${styles.actionIcon} ${styles.rollIcon}`}
             aria-hidden="true"
@@ -206,7 +226,7 @@ export function Roster({
           </span>
         </button>
         <button
-          className={styles.secondary}
+          className={`${styles.secondary} ${styles.funnelAction}`}
           disabled={!state.characters.length}
           onClick={() => (selecting ? endSelection() : setSelecting(true))}
         >
@@ -221,15 +241,17 @@ export function Roster({
       </section>
       <section className={styles.fates}>
         <div className={styles.sectionTitle}>
-          <i />
-          <h2>Recorded Fates</h2>
-          <i />
+          <i className={styles.sectionTitleRule} />
+          <h2 className={styles.sectionTitleHeading}>Recorded Fates</h2>
+          <i
+            className={`${styles.sectionTitleRule} ${styles.sectionTitleRuleEnd}`}
+          />
         </div>
         <nav className={styles.fateFilters} aria-label="Filter recorded fates">
           {(["all", "living", "fallen"] as Filter[]).map((value) => (
             <button
               key={value}
-              className={filter === value ? styles.active : undefined}
+              className={`${styles.filterButton} ${filter === value ? styles.active : ""}`}
               onClick={() => setFilter(value)}
             >
               {value === "fallen"
@@ -250,7 +272,7 @@ export function Roster({
               Mark all
             </button>
             <button
-              className={styles.primary}
+              className={`${styles.primary} ${styles.selectionAction}`}
               disabled={!selected.size}
               onClick={() => setPrinting(true)}
             >
@@ -275,13 +297,13 @@ export function Roster({
         {!state.characters.length ? (
           <section className={styles.empty}>
             <span className={styles.emptyDie}>◇</span>
-            <h2>No fates recorded</h2>
+            <h2 className={styles.emptyTitle}>No fates recorded</h2>
             <p>Roll four wretches and see who survives the first breath.</p>
           </section>
         ) : (
           !visible.length && (
             <section className={styles.empty}>
-              <h2>
+              <h2 className={styles.emptyTitle}>
                 No {filter === "living" ? "living souls" : "fallen souls"}
               </h2>
             </section>
@@ -302,7 +324,10 @@ export function Roster({
               </span>
             </button>
             {deleting && (
-              <button className={styles.secondary} onClick={endDeletion}>
+              <button
+                className={`${styles.secondary} ${styles.deletionSecondary}`}
+                onClick={endDeletion}
+              >
                 Cancel deletion
               </button>
             )}

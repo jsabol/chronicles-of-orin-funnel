@@ -134,7 +134,8 @@ function DeleteDialog({
       <p className={styles.eyebrow}>Final warning</p>
       <h2>Delete {name}?</h2>
       <p>
-        You can mark them "Fallen" under <strong>Life & Choices</strong>
+        You can mark them <strong>Fallen</strong> under{" "}
+        <strong>Life & Choices</strong>
         &nbsp;instead.
       </p>
       <div>
