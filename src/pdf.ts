@@ -6,6 +6,7 @@ import {
   type PDFFont,
   type PDFPage,
 } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import {
   ABILITIES,
   type Ability,
@@ -27,6 +28,19 @@ const rust = rgb(0, 0, 0);
 const paper = rgb(1, 1, 1);
 const muted = rgb(0, 0, 0);
 const rule = rgb(0, 0, 0);
+
+let agencyFontBytes: Promise<ArrayBuffer> | undefined;
+
+const loadAgencyFont = (): Promise<ArrayBuffer> => {
+  agencyFontBytes ??= fetch(
+    `${import.meta.env.BASE_URL}AgencyFB Black Regular.otf`,
+  ).then(async (response) => {
+    if (!response.ok)
+      throw new Error("Unable to load the embedded AgencyFB PDF font.");
+    return response.arrayBuffer();
+  });
+  return agencyFontBytes;
+};
 
 const pdfSafe = (value: string): string =>
   value
@@ -496,6 +510,7 @@ const drawCharacter = (
   pageHeight: number,
   regular: PDFFont,
   bold: PDFFont,
+  nameFont: PDFFont,
 ): void => {
   const half = pageHeight / 2;
   const slotBottom = slot === 0 ? half : 0;
@@ -513,18 +528,18 @@ const drawCharacter = (
   });
 
   const headerY = cardTop - 18;
-  const name = pdfSafe(character.record.name);
+  const name = pdfSafe(character.record.name.toUpperCase());
   let nameSize = 15;
   while (
     nameSize > 10 &&
-    bold.widthOfTextAtSize(name, nameSize) > cardWidth * 0.47
+    nameFont.widthOfTextAtSize(name, nameSize) > cardWidth * 0.47
   )
     nameSize -= 0.5;
   page.drawText(name, {
     x: marginX + 10,
     y: headerY,
     size: nameSize,
-    font: bold,
+    font: nameFont,
     color: ink,
   });
   const identity = pdfSafe(
@@ -673,11 +688,13 @@ export const generatePdfBytes = async (
   paperSize: PaperSize,
 ): Promise<Uint8Array> => {
   const pdf = await PDFDocument.create();
+  pdf.registerFontkit(fontkit);
   pdf.setTitle("Chronicles of Orrin Level-Zero Funnel");
   pdf.setSubject("Printable level-zero funnel characters");
   pdf.setCreator("Chronicles of Orrin Funnel");
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const nameFont = await pdf.embedFont(await loadAgencyFont());
   const [width, height] = PDF_PAGE_SIZES[paperSize];
 
   records.forEach((record, index) => {
@@ -699,6 +716,7 @@ export const generatePdfBytes = async (
       height,
       regular,
       bold,
+      nameFont,
     );
   });
   return pdf.save();

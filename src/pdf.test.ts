@@ -1,7 +1,18 @@
 import { PDFDocument } from "pdf-lib";
-import { describe, expect, it } from "vitest";
+import { readFile } from "node:fs/promises";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createCharacter } from "./domain";
 import { generatePdfBytes, PDF_PAGE_SIZES } from "./pdf";
+
+beforeAll(async () => {
+  const agencyFont = await readFile("public/AgencyFB Black Regular.otf");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(agencyFont)),
+  );
+});
+
+afterAll(() => vi.unstubAllGlobals());
 
 describe("print output", () => {
   it.each(["letter", "a4"] as const)(

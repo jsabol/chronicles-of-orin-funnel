@@ -1,0 +1,36 @@
+@use "styles/variables" as v;
+
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,600&display=swap");
+
+@font-face {
+  font-family: "Agency FB Black";
+  src: url("/AgencyFB Black Regular.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:global {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: v.$ink;
+    color: v.$ink;
+    font-family: v.$font-sans;
+    font-size: 18px;
+  }
+
+  body {
+    min-width: 320px;
+    margin: 0;
+    color: #d9c5a0;
+    background: v.$iron v.$iron-texture center/700px fixed;
+  }
+
+  :focus-visible {
+    outline: 4px solid #e7c864;
+    outline-offset: 3px;
+  }
+}

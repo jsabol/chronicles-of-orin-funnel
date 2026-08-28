@@ -1,0 +1,91 @@
+@use "variables" as v;
+
+@mixin button-base {
+  border: 3px solid v.$ink;
+  padding: 12px 20px;
+  font: 700 16px v.$font-sans;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+@mixin primary-button {
+  @include button-base;
+  background: v.$rust;
+  color: v.$light;
+  box-shadow: 4px 4px 0 v.$sand;
+
+  &:hover:not(:disabled) {
+    background: #702114;
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0 v.$sand;
+  }
+}
+
+@mixin secondary-button {
+  @include button-base;
+  background: transparent;
+  color: v.$ink;
+}
+
+@mixin delete-button {
+  @include button-base;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: v.$dark-rust;
+  background: transparent;
+  border-color: v.$dark-rust;
+}
+
+@mixin trash-icon {
+  width: 0.9em;
+  height: 1em;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  mask: url("/assets/fa-trash.svg") center/contain no-repeat;
+}
+
+@mixin eyebrow {
+  margin: 0 0 11px;
+  color: v.$rust;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+@mixin dialog-surface {
+  max-width: 460px;
+  border: 5px solid v.$ink;
+  background: v.$paper;
+  box-shadow: 10px 10px 0 v.$rust;
+
+  &::backdrop {
+    background: rgba(v.$ink, 0.8);
+  }
+}
+
+@mixin iron-surface($size: 680px) {
+  background: rgba(7, 8, 7, 0.92) v.$iron-texture center/$size;
+  border-color: #6d5035;
+  color: v.$gold-text;
+}
+
+@mixin clipped-corners($size: 12px) {
+  clip-path: polygon(
+    $size 0,
+    calc(100% - $size) 0,
+    100% $size,
+    100% calc(100% - $size),
+    calc(100% - $size) 100%,
+    $size 100%,
+    0 calc(100% - $size),
+    0 $size
+  );
+}

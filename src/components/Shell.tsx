@@ -3,9 +3,9 @@ import { store, asset } from "../app-store";
 import styles from "./Shell.module.scss";
 export function Shell({ children }: { children: ReactNode }) {
   return (
-    <div className={`${styles.shell} site-shell`}>
-      <header className={`${styles.masthead} masthead`}>
-        <a className={`${styles.brand} brand`} href="#/" aria-label="Chronicles of Orrin">
+    <div className={styles.shell}>
+      <header className={styles.masthead}>
+        <a className={styles.brand} href="#/" aria-label="Chronicles of Orrin">
           <img src={asset("logo.png")} alt="Chronicles of Orrin" />
         </a>
       </header>

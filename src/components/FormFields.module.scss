@@ -1,0 +1,112 @@
+@use "../styles/variables" as v;
+
+.field {
+  display: block;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  > span,
+  > label {
+    display: block;
+    font-size: 13px;
+  }
+
+  > label {
+    cursor: pointer;
+  }
+
+  > div {
+    display: flex;
+  }
+
+  input,
+  select {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    color: #120f0c;
+    background: v.$field-background;
+    border: 2px solid v.$ink;
+    font: 600 17px v.$font-sans;
+  }
+
+  option {
+    color: #120f0c;
+    background: v.$field-background;
+  }
+
+  input[readonly] {
+    color: #3f3529;
+    background: #d8c7a3;
+    box-shadow: inset 0 0 0 1px #a38b68;
+    cursor: not-allowed;
+  }
+
+  :global(.choices) {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    margin: 0;
+    font: 600 16px/1.25 v.$font-sans;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  :global(.choices__inner) {
+    min-height: 45px;
+    padding: 8px 34px 5px 10px;
+    color: #120f0c;
+    background: v.$field-background;
+    border: 2px solid v.$ink;
+    border-radius: 0;
+    font: inherit;
+  }
+
+  :global(.choices__list--single) {
+    padding: 0;
+
+    :global(.choices__item) {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+    }
+  }
+
+  :global(.choices__list--dropdown),
+  :global(.choices__list[aria-expanded]) {
+    z-index: 20;
+    color: #120f0c;
+    background: v.$field-background;
+    border: 2px solid v.$ink;
+    border-radius: 0;
+    font: inherit;
+
+    :global(.choices__item) {
+      padding: 10px;
+      line-height: 1.25;
+      white-space: normal;
+    }
+
+    :global(.choices__item--selectable.is-highlighted) {
+      background: v.$sand;
+    }
+  }
+
+  :global(.choices__input) {
+    color: #120f0c !important;
+    background: v.$field-background !important;
+    border: 0;
+    border-bottom: 1px solid #8c7456 !important;
+    font: inherit;
+  }
+}
+
+@media (max-width: v.$mobile-breakpoint) {
+  .field :global(.choices__inner) {
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+  }
+}

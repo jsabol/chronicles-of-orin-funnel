@@ -28,6 +28,7 @@ import {
 } from "../domain";
 import { asset, store } from "../app-store";
 import { SelectField, TextField, TrinketField } from "./FormFields";
+import styles from "./CharacterEditor.module.scss";
 
 type Option = {
   id: string | number;
@@ -83,7 +84,7 @@ function TraitPicker({
   onChange: (next: string[]) => void;
 }) {
   return (
-    <fieldset className="trait-picker">
+    <fieldset className={styles.traitPicker}>
       <legend>Ancestry traits · exactly 3 points</legend>
       {options.map((option) => (
         <label key={String(option.id)}>
@@ -124,27 +125,28 @@ function DeleteDialog({
   return (
     <dialog
       ref={dialog}
-      className="delete-dialog"
+      className={styles.deleteDialog}
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
       }}
     >
-      <p className="eyebrow">Final warning</p>
-      <h2>Eliminate character?</h2>
+      <p className={styles.eyebrow}>Final warning</p>
+      <h2>Delete {name}?</h2>
       <p>
-        Are you sure you want to delete <strong>{name}</strong>?
+        You can mark them "Fallen" under <strong>Life & Choices</strong>
+        &nbsp;instead.
       </p>
       <div>
-        <button type="button" className="secondary" onClick={onCancel}>
+        <button type="button" className={styles.secondary} onClick={onCancel}>
           Cancel
         </button>
         <button
           type="button"
-          className="danger delete-action"
+          className={styles.deleteAction}
           onClick={onConfirm}
         >
-          <span className="trash-icon" aria-hidden="true" />
+          <span className={styles.trashIcon} aria-hidden="true" />
           Eliminate
         </button>
       </div>
@@ -386,54 +388,58 @@ export function Editor({
     );
   return (
     <>
-      <div className="editor-head">
-        <div className="editor-head-actions">
-          <a href="#/" className="back">
+      <div className={styles.editorHead}>
+        <div className={styles.editorHeadActions}>
+          <a href="#/" className={styles.back}>
             ← Return to roster
           </a>
           <button
             type="button"
-            className="danger delete-action"
+            className={styles.deleteAction}
             onClick={() => setConfirmingDelete(true)}
           >
-            <span className="trash-icon" aria-hidden="true" />
+            <span className={styles.trashIcon} aria-hidden="true" />
             Eliminate
           </button>
         </div>
-        <h1 className={`character-name ${d.status}`}>
+        <h1 className={`${styles.characterName} ${styles[d.status]}`}>
           {d.status === "fallen" && (
             <img
-              className="fallen-icon"
+              className={styles.fallenIcon}
               src={asset("fallen-mark.webp")}
               alt=""
             />
           )}
           {draft.name}
         </h1>
-        <p className={`status-line ${d.status}`}>
+        <p className={`${styles.statusLine} ${styles[d.status]}`}>
           {d.status} · {d.ancestry.name} · {d.occupation.name}
         </p>
         {d.status === "fallen" && (
-          <p className="cause-of-death">
+          <p className={styles.causeOfDeath}>
             <strong>Cause of death:</strong>{" "}
             <em>{draft.causeOfDeath || "Not recorded"}</em>
           </p>
         )}
       </div>
-      <form id="character-form" onSubmit={(e) => e.preventDefault()}>
+      <form
+        id="character-form"
+        className={styles.form}
+        onSubmit={(e) => e.preventDefault()}
+      >
         {errors.length > 0 && (
-          <div className="validation" role="alert">
+          <div className={styles.validation} role="alert">
             {errors.map((error) => (
               <p key={error}>{error}</p>
             ))}
           </div>
         )}
-        <section className="sheet-grid">
+        <section className={styles.sheetGrid}>
           <div>
-            <div className="panel">
+            <div className={styles.panel}>
               <h2>Identity</h2>
-              <div className="form-grid">
-                <label className="field name-field">
+              <div className={styles.formGrid}>
+                <label className={styles.field}>
                   <span>Name</span>
                   <div>
                     <input
@@ -448,7 +454,7 @@ export function Editor({
                     />
                     <button
                       type="button"
-                      className="reroll regenerate-name"
+                      className={styles.reroll}
                       onClick={() =>
                         save((c) => {
                           c.name = generateName(c.ancestryId);
@@ -495,9 +501,9 @@ export function Editor({
                 />
               </div>
             </div>
-            <div className="panel">
+            <div className={styles.panel}>
               <h2>Life & choices</h2>
-              <div className="form-grid">
+              <div className={styles.formGrid}>
                 <TextField
                   label="Hit point d4"
                   value={draft.hpRoll}
@@ -532,13 +538,13 @@ export function Editor({
                 {dependent}
               </div>
             </div>
-            <div className="panel">
+            <div className={styles.panel}>
               <h2>Raw ability rolls</h2>
               <p>
                 4d6, drop the lowest. Ancestry increases appear in the final
                 record.
               </p>
-              <div className="ability-fields">
+              <div className={styles.abilityFields}>
                 {ABILITIES.map((ability) => (
                   <TextField
                     key={ability}
@@ -592,9 +598,9 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
     (item) => !SKILLS.includes(item as (typeof SKILLS)[number]),
   );
   return (
-    <aside className={`derived panel ${d.status}`}>
-      <p className="eyebrow">Calculated record</p>
-      <div className="big-vitals">
+    <aside className={`${styles.derived} ${styles.panel} ${styles[d.status]}`}>
+      <p className={styles.eyebrow}>Calculated record</p>
+      <div className={styles.bigVitals}>
         <span>
           <b>{d.maxHp}</b> HP
         </span>
@@ -602,7 +608,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
           <b>{d.armorClass}</b> AC
         </span>
       </div>
-      <div className="stats large">
+      <div className={styles.stats}>
         {ABILITIES.map((a) => (
           <span key={a}>
             <b>{a.toUpperCase()}</b> {d.finalAbilities[a]}
@@ -628,7 +634,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
         <dd>{d.gear.join(", ") || "None"}</dd>
       </dl>
       {visibleTraits.length > 0 && (
-        <section className="ancestry-features">
+        <section className={styles.ancestryFeatures}>
           <h2>Ancestry Features</h2>
           <ul>
             {visibleTraits.map((t) => (
@@ -641,7 +647,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
         </section>
       )}
       {d.magic.length > 0 && (
-        <section className="record-magic">
+        <section className={styles.recordMagic}>
           <h2>Magic & Powers</h2>
           <ul>
             {d.magic.map((item) => (
@@ -650,7 +656,7 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
           </ul>
         </section>
       )}{" "}
-      <section className="calculated-skills">
+      <section className={styles.calculatedSkills}>
         <h2>Skills</h2>
         <ul>
           {SKILLS.map((skill) => {
@@ -659,9 +665,17 @@ function Derived({ record }: { record: CharacterRecordV1 }) {
               d.modifiers[skillAbilities[skill]] +
               (proficient ? d.proficiencyBonus : 0);
             return (
-              <li key={skill} className={proficient ? "proficient" : ""}>
+              <li
+                key={skill}
+                className={proficient ? styles.proficient : undefined}
+              >
                 <span>
-                  {proficient ? "◆" : "◇"} {skill}
+                  <span
+                    className={proficient ? styles.proficientMark : undefined}
+                  >
+                    {proficient ? "◆" : "◇"}
+                  </span>{" "}
+                  {skill}
                 </span>
                 <b>
                   {value >= 0 ? "+" : ""}

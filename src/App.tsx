@@ -4,7 +4,7 @@ import { Shell } from "./components/Shell";
 import { Roster } from "./components/Roster";
 import { Editor } from "./components/CharacterEditor";
 import "choices.js/public/assets/styles/choices.min.css";
-import "./style.scss";
+import "./App.module.scss";
 
 export default function App() {
   const [state, setState] = useState(store.getState());

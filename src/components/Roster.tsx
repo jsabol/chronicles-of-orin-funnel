@@ -3,6 +3,7 @@ import type { CharacterRecordV1, PaperSize } from "../types";
 import { createFunnelBatch, cryptoRandom, deriveCharacter } from "../domain";
 import { downloadCharacterPdf } from "../pdf";
 import { asset, store } from "../app-store";
+import styles from "./Roster.module.scss";
 
 type Filter = "all" | "living" | "fallen";
 function CharacterCard({
@@ -21,7 +22,8 @@ function CharacterCard({
   const derived = deriveCharacter(character);
   return (
     <article
-      className={`character-card ${derived.status}`}
+      className={`${styles.characterCard} ${styles[derived.status]}`}
+      data-testid="character-card"
       tabIndex={0}
       onClick={selecting ? onToggle : onOpen}
       onKeyDown={(e) => {
@@ -29,7 +31,7 @@ function CharacterCard({
       }}
     >
       {selecting && (
-        <label className="check" onClick={(e) => e.stopPropagation()}>
+        <label className={styles.check} onClick={(e) => e.stopPropagation()}>
           <input
             type="checkbox"
             data-select={character.id}
@@ -39,20 +41,20 @@ function CharacterCard({
           <span>Select</span>
         </label>
       )}
-      <div className="fate-copy">
+      <div className={styles.fateCopy}>
         <h3>{character.name}</h3>
         <p>
           {derived.ancestry.name} <i>◆</i> {derived.occupation.name}
         </p>
         {derived.status === "fallen" && character.causeOfDeath && (
-          <p className="death-cause">{character.causeOfDeath}</p>
+          <p className={styles.deathCause}>{character.causeOfDeath}</p>
         )}
-        <div className="fate-vitals">
-          <span className="hp">{derived.maxHp} HP</span>
-          <span className="def">{derived.armorClass} DEF</span>
+        <div className={styles.fateVitals}>
+          <span className={styles.hp}>{derived.maxHp} HP</span>
+          <span className={styles.def}>{derived.armorClass} DEF</span>
         </div>
       </div>
-      <div className="fate-seal">
+      <div className={styles.fateSeal}>
         <img
           src={asset(
             derived.status === "living"
@@ -85,13 +87,13 @@ function PrintDialog({
   return (
     <dialog
       ref={dialog}
-      className="print-dialog"
+      className={styles.printDialog}
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
       }}
     >
-      <p className="eyebrow">Prepare the ledger</p>
+      <p className={styles.eyebrow}>Prepare the ledger</p>
       <h2>Choose paper size</h2>
       <label>
         <input
@@ -110,12 +112,12 @@ function PrintDialog({
         A4 <small>210 × 297 mm</small>
       </label>
       <div>
-        <button type="button" className="secondary" onClick={onCancel}>
+        <button type="button" className={styles.secondary} onClick={onCancel}>
           Cancel
         </button>
         <button
           type="button"
-          className="primary"
+          className={styles.primary}
           onClick={() => onConfirm(choice)}
         >
           Download PDF
@@ -182,46 +184,52 @@ export function Roster({
   };
   return (
     <>
-      <section className="doom-hero">
-        <div className="doom-copy">
-          <p className="eyebrow">Level-zero company</p>
+      <section className={styles.doomHero}>
+        <div className={styles.doomCopy}>
+          <p className={styles.eyebrow}>Level-zero company</p>
           <h1>The Doomed</h1>
           <p>
             <b>{state.characters.length}</b>{" "}
             {state.characters.length === 1 ? "character" : "characters"}
           </p>
-          <span className="doom-rule">◇—☠—◇</span>
+          <span className={styles.doomRule}>◇—☠—◇</span>
         </div>
       </section>
-      <section className="funnel-actions">
-        <button className="primary roll" onClick={roll}>
-          <span className="action-icon roll-icon" aria-hidden="true" />
+      <section className={styles.funnelActions}>
+        <button className={styles.primary} onClick={roll}>
+          <span
+            className={`${styles.actionIcon} ${styles.rollIcon}`}
+            aria-hidden="true"
+          />
           <span>
             Roll {rollCount === 1 ? "One Wretch" : `${rollCount} Wretches`}
           </span>
         </button>
         <button
-          className="secondary funnel"
+          className={styles.secondary}
           disabled={!state.characters.length}
           onClick={() => (selecting ? endSelection() : setSelecting(true))}
         >
-          <span className="action-icon print-icon" aria-hidden="true" />
+          <span
+            className={`${styles.actionIcon} ${styles.printIcon}`}
+            aria-hidden="true"
+          />
           <span>
             {selecting ? "Cancel the Casting" : "Cast Them Into the Funnel"}
           </span>
         </button>
       </section>
-      <section className="fates">
-        <div className="section-title">
+      <section className={styles.fates}>
+        <div className={styles.sectionTitle}>
           <i />
           <h2>Recorded Fates</h2>
           <i />
         </div>
-        <nav className="fate-filters" aria-label="Filter recorded fates">
+        <nav className={styles.fateFilters} aria-label="Filter recorded fates">
           {(["all", "living", "fallen"] as Filter[]).map((value) => (
             <button
               key={value}
-              className={filter === value ? "active" : ""}
+              className={filter === value ? styles.active : undefined}
               onClick={() => setFilter(value)}
             >
               {value === "fallen"
@@ -231,10 +239,10 @@ export function Roster({
           ))}
         </nav>
         {selecting && (
-          <div className="selection-bar">
+          <div className={styles.selectionBar}>
             <strong>{selected.size} marked</strong>
             <button
-              className="text-button"
+              className={styles.textButton}
               onClick={() =>
                 setSelected(new Set(state.characters.map((c) => c.id)))
               }
@@ -242,7 +250,7 @@ export function Roster({
               Mark all
             </button>
             <button
-              className="primary"
+              className={styles.primary}
               disabled={!selected.size}
               onClick={() => setPrinting(true)}
             >
@@ -250,7 +258,7 @@ export function Roster({
             </button>
           </div>
         )}
-        <div className="cards">
+        <div className={styles.cards}>
           {visible.map((c) => (
             <CharacterCard
               key={c.id}
@@ -265,14 +273,14 @@ export function Roster({
           ))}
         </div>
         {!state.characters.length ? (
-          <section className="empty">
-            <span className="empty-die">◇</span>
+          <section className={styles.empty}>
+            <span className={styles.emptyDie}>◇</span>
             <h2>No fates recorded</h2>
             <p>Roll four wretches and see who survives the first breath.</p>
           </section>
         ) : (
           !visible.length && (
-            <section className="empty">
+            <section className={styles.empty}>
               <h2>
                 No {filter === "living" ? "living souls" : "fallen souls"}
               </h2>
@@ -280,13 +288,13 @@ export function Roster({
           )
         )}
         {state.characters.length > 0 && !selecting && (
-          <div className="deletion-actions">
+          <div className={styles.deletionActions}>
             <button
-              className="danger delete-action"
+              className={styles.deleteAction}
               disabled={deleting && selected.size === 0}
               onClick={() => (deleting ? confirmDeletion() : setDeleting(true))}
             >
-              <span className="trash-icon" aria-hidden="true" />
+              <span className={styles.trashIcon} aria-hidden="true" />
               <span>
                 {deleting
                   ? `Confirm delete ${selected.size}`
@@ -294,7 +302,7 @@ export function Roster({
               </span>
             </button>
             {deleting && (
-              <button className="secondary" onClick={endDeletion}>
+              <button className={styles.secondary} onClick={endDeletion}>
                 Cancel deletion
               </button>
             )}

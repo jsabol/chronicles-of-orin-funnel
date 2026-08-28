@@ -1,40 +1,102 @@
+@use "../styles/variables" as v;
+
 .shell {
   min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 50% 16%,
+      rgba(116, 34, 16, 0.24),
+      transparent 34%
+    ),
+    rgba(5, 5, 4, 0.48);
 }
 
 .masthead {
+  height: 116px;
+  display: flex;
   position: relative;
+  align-items: center;
+  justify-content: center;
+  padding-inline: v.$content-gutter;
+  color: v.$light;
+  border-bottom: 2px solid #6f321d;
+  box-shadow:
+    0 3px 0 #080706,
+    0 5px 0 #8f5d34;
+  background: #090a09 v.$iron-texture center/620px;
 }
 
 .brand {
   display: grid;
   place-items: center;
+  padding: 0 58px;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  border-inline: 1px solid rgba(174, 112, 60, 0.28);
+  background-color: rgba(10, 9, 8, 0.94);
+
+  img {
+    display: block;
+    width: clamp(205px, 24vw, 300px);
+    height: 114px;
+    object-fit: contain;
+  }
 }
 
 .warning {
   padding: 12px 5vw;
-  background: #ffe4a3;
   color: #5b1e10;
-  border-bottom: 3px solid #9b321c;
+  background: #ffe4a3;
+  border-bottom: 3px solid v.$rust;
   font-weight: 700;
 }
 
 .content {
   max-width: 1280px;
   margin: auto;
-  padding: 0 max(4vw, 22px) 86px;
+  padding: 0 v.$content-gutter 86px;
 }
 
 .footer {
-  border-top: 1px solid #513421;
-  background: #070706 url("/assets/iron.webp") center/700px;
-  color: #aa9c82;
   padding: 28px 5vw;
+  color: v.$muted-gold;
+  background: v.$deep-ink v.$iron-texture center/700px;
+  border-top: 1px solid #513421;
   font-size: 13px;
   letter-spacing: 0.08em;
 
   a {
-    color: #d3a85e;
+    color: v.$sand;
+  }
+}
+
+@media (max-width: v.$tablet-breakpoint) {
+  .masthead {
+    height: 82px;
   }
 
+  .brand {
+    padding-inline: 30px;
+
+    img {
+      width: 190px;
+      height: 68px;
+    }
+  }
+
+  .content {
+    padding-inline: 20px;
+  }
+}
+
+@media (max-width: v.$small-mobile-breakpoint) {
+  .brand {
+    border: 0;
+
+    img {
+      width: 160px;
+      height: 62px;
+    }
+  }
 }

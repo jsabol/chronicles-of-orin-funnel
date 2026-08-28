@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Choices from "choices.js";
 import { TRINKETS } from "../data";
+import styles from "./FormFields.module.scss";
 
 type Option = {
   id: string | number;
@@ -26,7 +27,7 @@ export function SelectField({
   disabled?: boolean;
 }) {
   return (
-    <label className="field">
+    <label className={styles.field}>
       <span>{label}</span>
       <div>
         <select
@@ -61,7 +62,7 @@ export function TextField({
   readOnly?: boolean;
 }) {
   return (
-    <label className="field">
+    <label className={styles.field}>
       <span>{label}</span>
       <div>
         <input
@@ -103,7 +104,7 @@ export function TrinketField({
     };
   }, [value, onChange]);
   return (
-    <div className="field">
+    <div className={styles.field}>
       <label htmlFor="field-trinket">Trinket</label>
       <div>
         <select id="field-trinket" ref={select} defaultValue={String(value)}>
