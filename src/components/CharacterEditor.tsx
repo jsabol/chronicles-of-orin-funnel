@@ -22,6 +22,7 @@ import {
 import {
   deriveCharacter,
   generateAncestryChoices,
+  generateName,
   generateOccupationChoices,
   validateCharacter,
 } from "../domain";
@@ -432,15 +433,34 @@ export function Editor({
             <div className="panel">
               <h2>Identity</h2>
               <div className="form-grid">
-                <TextField
-                  label="Name"
-                  value={draft.name}
-                  onChange={(v) =>
-                    save((c) => {
-                      c.name = v.slice(0, 60);
-                    })
-                  }
-                />
+                <label className="field name-field">
+                  <span>Name</span>
+                  <div>
+                    <input
+                      type="text"
+                      value={draft.name}
+                      maxLength={60}
+                      onChange={(event) =>
+                        save((c) => {
+                          c.name = event.target.value;
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="reroll regenerate-name"
+                      onClick={() =>
+                        save((c) => {
+                          c.name = generateName(c.ancestryId);
+                        })
+                      }
+                      aria-label="Generate a new random name"
+                      title="Generate a new random name"
+                    >
+                      <img src={asset("arrow-rotate-right-solid.svg")} alt="" />
+                    </button>
+                  </div>
+                </label>
                 <SelectField
                   label="Ancestry"
                   value={draft.ancestryId}

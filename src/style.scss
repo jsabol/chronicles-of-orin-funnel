@@ -484,6 +484,16 @@ button,
   background: $sand;
   font-size: 21px;
 }
+.name-field .regenerate-name {
+  width: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+}
+.name-field .regenerate-name img {
+  width: 19px;
+  height: 19px;
+}
 .trait-picker {
   grid-column: 1/-1;
   border: 2px solid $ink;
@@ -1051,8 +1061,8 @@ main {
   filter: invert(72%) sepia(18%) saturate(815%) hue-rotate(345deg);
 }
 .check {
-  left: 10px;
-  right: auto;
+  left: auto;
+  right: 10px;
   top: 10px;
   background: #681f12;
   border: 1px solid #c58b5a;

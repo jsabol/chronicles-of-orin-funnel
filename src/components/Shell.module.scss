@@ -1,0 +1,40 @@
+.shell {
+  min-height: 100vh;
+}
+
+.masthead {
+  position: relative;
+}
+
+.brand {
+  display: grid;
+  place-items: center;
+}
+
+.warning {
+  padding: 12px 5vw;
+  background: #ffe4a3;
+  color: #5b1e10;
+  border-bottom: 3px solid #9b321c;
+  font-weight: 700;
+}
+
+.content {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 max(4vw, 22px) 86px;
+}
+
+.footer {
+  border-top: 1px solid #513421;
+  background: #070706 url("/assets/iron.webp") center/700px;
+  color: #aa9c82;
+  padding: 28px 5vw;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+
+  a {
+    color: #d3a85e;
+  }
+
+}
