@@ -195,7 +195,7 @@ export function Roster({
       </section>
       <section className="funnel-actions">
         <button className="primary roll" onClick={roll}>
-          <img src={asset("dice.webp")} alt="" />
+          <span className="action-icon roll-icon" aria-hidden="true" />
           <span>
             Roll {rollCount === 1 ? "One Wretch" : `${rollCount} Wretches`}
           </span>
@@ -205,7 +205,7 @@ export function Roster({
           disabled={!state.characters.length}
           onClick={() => (selecting ? endSelection() : setSelecting(true))}
         >
-          <img src={asset("printer.webp")} alt="" />
+          <span className="action-icon print-icon" aria-hidden="true" />
           <span>
             {selecting ? "Cancel the Casting" : "Cast Them Into the Funnel"}
           </span>
