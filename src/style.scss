@@ -1,5 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,600&display=swap");
 
+@font-face {
+  font-family: "Agency FB Black";
+  src: url("/AgencyFB Black Regular.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 $ink: #17120e;
 $sand: #d3a85e;
 $paper: #ead7ad;
@@ -46,9 +54,7 @@ body {
   text-transform: uppercase;
 }
 .brand span {
-  font:
-    italic 16px Newsreader,
-    serif;
+  font: italic 16px "Barlow Condensed", Impact, sans-serif;
   color: $sand;
   letter-spacing: 0.18em;
 }
@@ -101,7 +107,7 @@ main {
   margin: 0 0 11px;
   text-transform: uppercase;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 0.25em;
   color: $rust;
 }
@@ -117,9 +123,7 @@ main {
   letter-spacing: -0.035em;
 }
 .hero-copy h1 em {
-  font:
-    italic 0.76em Newsreader,
-    serif;
+  font: italic 0.76em "Barlow Condensed", Impact, sans-serif;
   color: $sand;
   text-transform: none;
 }
@@ -127,7 +131,7 @@ main {
   max-width: 430px;
   color: #c8bca5;
   line-height: 1.45;
-  font-family: Newsreader, serif;
+  font-family: "Barlow Condensed", Impact, sans-serif;
 }
 .hero-art {
   min-height: 500px;
@@ -390,6 +394,17 @@ button,
 }
 .editor-head h1 {
   font-size: 64px;
+  font-family: "Agency FB Black", sans-serif;
+  font-weight: 900;
+  letter-spacing: normal;
+  mask-image:
+    linear-gradient(rgba(255, 255, 255, 0.25) 0 0),
+    url("/assets/mud_with_blood_texture.jpg");
+  mask-mode: alpha, luminance;
+  mask-position: center, center;
+  mask-repeat: repeat, repeat;
+  mask-size: auto, 760px;
+  mask-composite: add;
 }
 .character-name {
   display: flex;
@@ -651,7 +666,7 @@ footer a {
   }
   .hero-panel {
     display: block;
-    padding-right: max(5vw, 24px);
+    padding-right: max(4.5vw, 20px);
     position: relative;
   }
   .hero-art {
@@ -736,7 +751,7 @@ body {
   color: #bda27b;
 }
 .brand strong {
-  font-family: Newsreader, serif;
+  font-family: "Barlow Condensed", Impact, sans-serif;
   font-size: 44px;
   color: #d4b781;
   text-shadow: 0 2px 0 #40200e;
@@ -782,21 +797,27 @@ main {
   color: #a77750;
 }
 .doom-copy h1 {
-  font:
-    600 clamp(27.5px, 3.5vw, 46px)/0.9 Newsreader,
-    serif;
+  font: 900 clamp(40px, 4vw, 60px)/0.9 "Agency FB Black", sans-serif;
   text-transform: uppercase;
   margin: 0;
   color: #dcc9a7;
   text-shadow: 3px 3px 0 #120b07;
-  letter-spacing: -0.02em;
+  letter-spacing: normal;
+  mask-image:
+    linear-gradient(rgba(255, 255, 255, 0.25) 0 0),
+    url("/assets/mud_with_blood_texture.jpg");
+  mask-mode: alpha, luminance;
+  mask-position: center, center;
+  mask-repeat: repeat, repeat;
+  mask-size: auto, 760px;
+  mask-composite: add;
 }
 .doom-copy > p {
   margin: 10px 0;
   color: #b34527;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 24px;
+  font-size: 20px;
 }
 .doom-copy > p b {
   font-weight: 600;
@@ -820,9 +841,7 @@ main {
   gap: 20px;
   outline: 1px solid #21150e;
   outline-offset: -9px;
-  font:
-    600 clamp(12px, 1.25vw, 18px) Newsreader,
-    serif;
+  font: 600 clamp(13px, 1.35vw, 19px) "Barlow Condensed", Impact, sans-serif;
   letter-spacing: 0.02em;
   box-shadow:
     0 0 0 2px #080605,
@@ -874,9 +893,7 @@ main {
   transform: scaleX(-1);
 }
 .section-title h2 {
-  font:
-    600 31px Newsreader,
-    serif;
+  font: 600 31px "Barlow Condensed", Impact, sans-serif;
   text-transform: uppercase;
   color: #d6bd96;
   letter-spacing: 0.06em;
@@ -953,20 +970,16 @@ main {
   padding: 25px 25px 20px;
 }
 .fate-copy h3 {
-  font:
-    600 31px/1 Newsreader,
-    serif;
+  font: 900 31px/1 "Agency FB Black", sans-serif;
   text-transform: uppercase;
   color: #d6bd98;
   margin: 0 0 8px;
-  letter-spacing: 0.015em;
+  letter-spacing: normal;
 }
 .fate-copy p {
   margin: 0 0 18px;
   color: #a99170;
-  font:
-    500 18px Newsreader,
-    serif;
+  font: 500 18px "Barlow Condensed", Impact, sans-serif;
 }
 .fate-copy p i {
   font-size: 9px;
@@ -977,9 +990,7 @@ main {
   display: flex;
   gap: 25px;
   color: #ccb58f;
-  font:
-    600 18px Newsreader,
-    serif;
+  font: 600 18px "Barlow Condensed", Impact, sans-serif;
   text-transform: uppercase;
 }
 .fate-vitals span + span {
@@ -1011,9 +1022,7 @@ main {
 }
 .fate-seal strong {
   text-transform: uppercase;
-  font:
-    600 17px Newsreader,
-    serif;
+  font: 600 17px "Barlow Condensed", Impact, sans-serif;
   color: #77944c;
 }
 .fallen .fate-seal strong {
@@ -1059,7 +1068,7 @@ main {
   color: #a89271;
 }
 .empty h2 {
-  font-family: Newsreader, serif;
+  font-family: "Barlow Condensed", Impact, sans-serif;
   text-transform: uppercase;
   color: #ceb38a;
 }
@@ -1353,8 +1362,8 @@ footer {
 }
 .funnel-actions button {
   height: auto;
-  min-height: 44px;
-  padding: 7px 14px !important;
+  min-height: 48px;
+  padding: 9px 17px !important;
   gap: 6px;
   line-height: 1;
   outline-offset: -5px;
@@ -1370,8 +1379,8 @@ footer {
   }
   .funnel-actions button {
     height: auto;
-    min-height: 42px;
-    padding: 6px 12px !important;
+    min-height: 46px;
+    padding: 8px 14px !important;
     gap: 6px;
     justify-content: center;
   }
@@ -1519,4 +1528,43 @@ footer {
 }
 #character-form .derived .eyebrow {
   color: #d7bd94;
+}
+
+/* Funnel action icons inherit the button text color. */
+.funnel-actions .action-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  mask: center/contain no-repeat;
+}
+.funnel-actions .roll-icon {
+  mask-image: url("/assets/2d6.svg");
+}
+.funnel-actions .print-icon {
+  mask-image: url("/assets/fa-print.svg");
+}
+@media (max-width: 800px) {
+  .funnel-actions .action-icon {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* Keep the print glyph visually balanced with the larger dice icon. */
+.funnel-actions .print-icon {
+  width: 22px;
+  height: 22px;
+}
+@media (max-width: 800px) {
+  .funnel-actions .print-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Fallen character names use the same rust tone in both views. */
+.character-card.fallen .fate-copy h3,
+.character-name.fallen {
+  color: #8b2113;
 }

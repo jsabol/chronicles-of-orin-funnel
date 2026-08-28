@@ -400,8 +400,8 @@ export function Editor({
           </button>
         </div>
         <p className="eyebrow">Level-zero record</p>
-        <h1 className="character-name">
-          {draft.name}
+        <h1 className={`character-name ${d.status}`}>
+          
           {d.status === "fallen" && (
             <img
               className="fallen-icon"
@@ -409,6 +409,7 @@ export function Editor({
               alt=""
             />
           )}
+          {draft.name}
         </h1>
         <p className={`status-line ${d.status}`}>
           {d.status} · {d.ancestry.name} · {d.occupation.name}

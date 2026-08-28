@@ -9,7 +9,7 @@ export const WODE_ELF_NAMES: NameProfile = {
     "Llyandros",
     "Radiarwyn",
     "Elvyr",
-    "Nimu�",
+    "Nimu",
     "Rhegyth",
     "Viarwyn",
     "Ysallwyth",
